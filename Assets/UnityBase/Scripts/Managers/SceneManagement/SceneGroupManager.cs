@@ -22,9 +22,9 @@ namespace UnityBase.SceneManagement
         private readonly AsyncOperationGroup _operationGroup;
         private SceneReferenceState _sceneReferenceState;
 
-        public SceneGroupManager(ManagerDataHolderSO managerDataHolderSo)
+        public SceneGroupManager(AppDataHolderSO appDataHolderSo)
         {
-            _sceneManagerSo = managerDataHolderSo.sceneManagerSo;
+            _sceneManagerSo = appDataHolderSo.sceneManagerSo;
             
             _loadingSceneController = new LoadingSceneController(_sceneManagerSo.loadingSceneAssetSo.sceneData);
             

@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace UnityBase.Manager
 {
-    public class TutorialManager : ITutorialDataService, IAppPresenterDataService
+    public class TutorialManager : ITutorialDataService, IAppConstructorDataService
     {
         private Transform _tutorialsParent;
 
@@ -15,9 +15,9 @@ namespace UnityBase.Manager
 
         private readonly IPoolDataService _poolDataService;
 
-        public TutorialManager(ManagerDataHolderSO managerDataHolderSo, IPoolDataService poolDataService)
+        public TutorialManager(AppDataHolderSO appDataHolderSo, IPoolDataService poolDataService)
         {
-            _tutorialManagerSo = managerDataHolderSo.tutorialManagerSo;
+            _tutorialManagerSo = appDataHolderSo.tutorialManagerSo;
 
             _poolDataService = poolDataService;
 

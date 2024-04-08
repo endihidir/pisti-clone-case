@@ -6,14 +6,11 @@ namespace UnityBase.Extensions
     {
         public static void Refresh(ref CancellationTokenSource cancellationTokenSource)
         {
-            if (cancellationTokenSource != null)
+            if (cancellationTokenSource == null)
             {
-                if (cancellationTokenSource.IsCancellationRequested)
-                {
-                    cancellationTokenSource = new CancellationTokenSource();
-                }
+                cancellationTokenSource = new CancellationTokenSource();
             }
-            else
+            else if (cancellationTokenSource.IsCancellationRequested)
             {
                 cancellationTokenSource = new CancellationTokenSource();
             }

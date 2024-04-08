@@ -1210,8 +1210,7 @@ MonoBehaviour:
   autoRun: 1
   autoInjectGameObjects:
   - {fileID: 975548291}
-  _managerDataHolderSo: {fileID: 11400000, guid: 06d8434a855714a73821033bd9c78a4a,
-    type: 2}
+  _appDataHolderSo: {fileID: 11400000, guid: 06d8434a855714a73821033bd9c78a4a, type: 2}
 --- !u!1 &1367007490
 GameObject:
   m_ObjectHideFlags: 0

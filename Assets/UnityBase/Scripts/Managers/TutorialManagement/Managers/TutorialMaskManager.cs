@@ -12,7 +12,7 @@ using UnityEngine.UI;
 
 namespace UnityBase.Manager
 {
-    public class TutorialMaskManager : ITutorialMaskDataService, IAppPresenterDataService
+    public class TutorialMaskManager : ITutorialMaskDataService, IAppConstructorDataService
     {
         private GameObject _maskRoot;
 
@@ -26,9 +26,9 @@ namespace UnityBase.Manager
 
         private readonly IPoolDataService _poolDataService;
 
-        public TutorialMaskManager(ManagerDataHolderSO managerDataHolderSo, IPoolDataService poolDataService)
+        public TutorialMaskManager(AppDataHolderSO appDataHolderSo, IPoolDataService poolDataService)
         {
-            var maskManagerSo = managerDataHolderSo.tutorialMaskManagerSo;
+            var maskManagerSo = appDataHolderSo.tutorialMaskManagerSo;
 
             _maskRoot = maskManagerSo.maskRoot;
 

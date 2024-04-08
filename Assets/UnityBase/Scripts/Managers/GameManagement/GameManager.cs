@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace UnityBase.Manager
 {
-    public class GameManager : IGameDataService, IAppPresenterDataService
+    public class GameManager : IGameDataService, IAppConstructorDataService
     {
         private CanvasGroup _splashScreen;
         private readonly ISceneGroupLoadService _sceneGroupLoadService;
@@ -18,9 +18,9 @@ namespace UnityBase.Manager
         
         private EventBinding<GameStateData> _gameStateBinding = new EventBinding<GameStateData>();
 
-        public GameManager(ManagerDataHolderSO managerDataHolderSo, ISceneGroupLoadService sceneGroupLoadService)
+        public GameManager(AppDataHolderSO appDataHolderSo, ISceneGroupLoadService sceneGroupLoadService)
         {
-            var gameManagerData = managerDataHolderSo.gameManagerSo;
+            var gameManagerData = appDataHolderSo.gameManagerSo;
             _splashScreen = gameManagerData.splashScreen;
             _sceneGroupLoadService = sceneGroupLoadService;
             _passSplashScreen = gameManagerData.passSplashScreen;

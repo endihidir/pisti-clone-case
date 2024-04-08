@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace UnityBase.Manager
 {
-    public class CurrencyManager : ICurrencyDataService, ICurrencyViewService, IAppPresenterDataService
+    public class CurrencyManager : ICurrencyDataService, ICurrencyViewService, IAppConstructorDataService
     {
         private const string COIN_AMOUNT_KEY = "CoinAmountKey";
         public event Action<int> OnCoinDataUpdate;
@@ -24,9 +24,9 @@ namespace UnityBase.Manager
             private set => PlayerPrefs.SetInt(COIN_AMOUNT_KEY, value);
         }
 
-        public CurrencyManager(ManagerDataHolderSO managerDataHolderSo)
+        public CurrencyManager(AppDataHolderSO appDataHolderSo)
         {
-            var currencyManagerData = managerDataHolderSo.currencyManagerSo;
+            var currencyManagerData = appDataHolderSo.currencyManagerSo;
 
             _startCoinAmount = currencyManagerData.startCoinAmount;
         }

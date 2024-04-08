@@ -10,7 +10,7 @@ namespace UnityBase.Presenter
     public class AppManagerPresenter : IInitializable, IStartable, IDisposable
     {
         [Inject] 
-        private readonly IEnumerable<IAppPresenterDataService> _appPresenterDataServices;
+        private readonly IEnumerable<IAppConstructorDataService> _appPresenterDataServices;
 
         public void Initialize() => _appPresenterDataServices.ForEach(x => x.Initialize());
         public void Start() => _appPresenterDataServices.ForEach(x => x.Start());

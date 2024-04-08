@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace UnityBase.Manager
 {
-    public class TutorialStepManager : ITutorialStepDataService, IAppPresenterDataService
+    public class TutorialStepManager : ITutorialStepDataService, IAppConstructorDataService
     {
         private readonly ILevelDataService _levelDataService;
         private readonly ITutorialDataService _tutorialDataService;
@@ -42,10 +42,10 @@ namespace UnityBase.Manager
         public bool IsSelectedLevelTutorialEnabled => IsLevelMatchedWithTutorial(_levelDataService.LastSelectedChapterIndex, _levelDataService.LastSelectedLevelIndex)
                                                       && !IsSelectedLevelTutorialCompleted();
 
-        public TutorialStepManager(ManagerDataHolderSO managerDataHolderSo, ILevelDataService levelDataService, ITutorialDataService tutorialDataService, 
+        public TutorialStepManager(AppDataHolderSO appDataHolderSo, ILevelDataService levelDataService, ITutorialDataService tutorialDataService, 
             ITutorialMaskDataService tutorialMaskDataService, IJsonDataService jsonDataService)
         {
-            _tutorialStepManagerSo = managerDataHolderSo.tutorialStepManagerSo;
+            _tutorialStepManagerSo = appDataHolderSo.tutorialStepManagerSo;
 
             _disableTutorial = _tutorialStepManagerSo.disableTutorial;
             _tutorialStepData = _tutorialStepManagerSo.tutorialStepData;

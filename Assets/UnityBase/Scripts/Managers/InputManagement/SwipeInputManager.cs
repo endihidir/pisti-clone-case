@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 
 namespace UnityBase.Manager
 {
-    public class SwipeInputManager : ISwipeInputDataService, IGameplayPresenterDataService
+    public class SwipeInputManager : ISwipeInputDataService, IGameplayConstructorService
     {
         private float _minDistanceForSwipe = Screen.width * 0.1f;
 

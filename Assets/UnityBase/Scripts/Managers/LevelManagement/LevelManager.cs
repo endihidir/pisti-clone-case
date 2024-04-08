@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace UnityBase.Manager
 {
-    public class LevelManager : ILevelDataService, IAppPresenterDataService
+    public class LevelManager : ILevelDataService, IAppConstructorDataService
     {
         public static Func<int, bool> OnSelectChapter;
         public static Func<int, bool> OnSelectLevel;
@@ -66,9 +66,9 @@ namespace UnityBase.Manager
 
         #endregion
 
-        public LevelManager(ManagerDataHolderSO managerDataHolderSo)
+        public LevelManager(AppDataHolderSO appDataHolderSo)
         {
-            var levelManagerData = managerDataHolderSo.levelManagerSo;
+            var levelManagerData = appDataHolderSo.levelManagerSo;
 
             _chapterData = levelManagerData.chapterData;
             _defaultUnlockedChapterIndex = levelManagerData.defaultUnlockedChapterIndex;

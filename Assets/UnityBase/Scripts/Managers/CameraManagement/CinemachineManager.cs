@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace UnityBase.Manager
 {
-    public class CinemachineManager : ICinemachineDataService, IGameplayPresenterDataService
+    public class CinemachineManager : ICinemachineDataService, IGameplayConstructorService
     {
         public static Action<GameState> OnChangeCamera;
 
@@ -23,9 +23,9 @@ namespace UnityBase.Manager
 
         private CameraState _currentCameraState;
 
-        public CinemachineManager(ManagerDataHolderSO managerDataHolderSo)
+        public CinemachineManager(AppDataHolderSO appDataHolderSo)
         {
-            var cinemachineData = managerDataHolderSo.cinemachineManagerSo;
+            var cinemachineData = appDataHolderSo.cinemachineManagerSo;
             _stateDrivenCameras = cinemachineData.stateDrivenCameras;
             _cinemachineBrain = cinemachineData.cinemachineBrain;
             _cinemachineBrain.m_UpdateMethod = cinemachineData.cinemachineUpdateMethod;

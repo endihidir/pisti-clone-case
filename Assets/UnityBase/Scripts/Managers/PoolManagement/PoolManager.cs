@@ -10,7 +10,7 @@ using VContainer;
 
 namespace UnityBase.Manager
 {
-    public class PoolManager : IPoolDataService, IAppPresenterDataService
+    public class PoolManager : IPoolDataService, IAppConstructorDataService
     {
         private PoolManagerSO _poolManagerSo;
         
@@ -22,9 +22,9 @@ namespace UnityBase.Manager
 
         private bool _isDisposed;
         
-        public PoolManager(ManagerDataHolderSO managerDataHolderSo, IObjectResolver objectResolver)
+        public PoolManager(AppDataHolderSO appDataHolderSo, IObjectResolver objectResolver)
         {
-            _poolManagerSo = managerDataHolderSo.poolManagerSo;
+            _poolManagerSo = appDataHolderSo.poolManagerSo;
             _poolableObjectsParent = _poolManagerSo.poolParentTransform;
             _objectResolver = objectResolver;
             _isDisposed = false;

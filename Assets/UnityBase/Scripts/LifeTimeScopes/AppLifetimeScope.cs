@@ -11,13 +11,13 @@ namespace UnityBase.BaseLifetimeScope
 {
     public class AppLifetimeScope : LifetimeScope
     {
-        [SerializeField] private ManagerDataHolderSO _managerDataHolderSo;
+        [SerializeField] private AppDataHolderSO _appDataHolderSo;
 
         protected override void Configure(IContainerBuilder builder)
         {
-            _managerDataHolderSo.Initialize();
+            _appDataHolderSo.Initialize();
             
-            builder.RegisterInstance(_managerDataHolderSo);
+            builder.RegisterInstance(_appDataHolderSo);
 
             RegisterEntryPoints(builder);
 
@@ -33,7 +33,7 @@ namespace UnityBase.BaseLifetimeScope
             builder.RegisterEntryPoint<AppManagerPresenter>();
         }
         
-          private void RegisterSingletonServices(IContainerBuilder builder)
+        private void RegisterSingletonServices(IContainerBuilder builder)
         {
             builder.Register<GameManager>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<SceneGroupManager>(Lifetime.Singleton).AsImplementedInterfaces();
@@ -44,6 +44,7 @@ namespace UnityBase.BaseLifetimeScope
             builder.Register<TutorialManager>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<TutorialMaskManager>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<TutorialStepManager>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<CinemachineManager>(Lifetime.Singleton).AsImplementedInterfaces();
 
             builder.Register<CommandManager>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<CurrencyManager>(Lifetime.Singleton).AsImplementedInterfaces();

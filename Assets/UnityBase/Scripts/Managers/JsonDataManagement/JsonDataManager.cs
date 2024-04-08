@@ -14,7 +14,7 @@ using UnityEngine;
 
 namespace UnityBase.Manager
 {
-    public class JsonDataManager : IJsonDataService, IAppPresenterDataService
+    public class JsonDataManager : IJsonDataService, IAppConstructorDataService
     {
         private const string DirectoryName = "JsonData";
 

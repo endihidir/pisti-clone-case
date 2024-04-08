@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using DG.Tweening;
 using UnityBase.Extensions;
 using UnityEngine;
 
@@ -10,7 +9,9 @@ namespace UnityBase.Command
     public class ObjectMoveCommand : MoveCommand
     {
         private Vector3 _newPosition;
+        
         private Vector3 _oldPosition;
+        
         private bool _isInProgress;
         public override bool IsInProgress => _isInProgress;
         public override bool CanPassNextCommandInstantly => _moveEntity.CanPassNextMovementInstantly;
@@ -22,7 +23,7 @@ namespace UnityBase.Command
 
         public override async void Execute(Action onComplete)
         {
-            _oldPosition = _moveEntity.Transform.position;
+            _oldPosition = _moveEntity.ObjectTransform.position;
             
             _newPosition = _moveEntity.TargetPosition;
 
@@ -33,7 +34,8 @@ namespace UnityBase.Command
         {
             if (directly)
             {
-                _moveEntity.Transform.position = _oldPosition;
+                _moveEntity.ObjectTransform.position = _oldPosition;
+                onComplete?.Invoke();
                 return;    
             }
             
@@ -44,7 +46,8 @@ namespace UnityBase.Command
         {
             if (directly)
             {
-                _moveEntity.Transform.transform.position = _newPosition;
+                _moveEntity.ObjectTransform.transform.position = _newPosition;
+                onComplete?.Invoke();
                 return;
             }
             
@@ -56,7 +59,6 @@ namespace UnityBase.Command
         {
             _cancellationTokenSource?.Cancel();
             _cancellationTokenSource?.Dispose();
-            _moveEntity.MeshHandlerTransform.DOKill();
         }
 
         private async UniTask MoveObjectAsync(Vector3 targetPosition, Action onComplete)
@@ -67,11 +69,7 @@ namespace UnityBase.Command
 
             try
             {
-                var dir = (targetPosition - _moveEntity.Transform.position).normalized;
-                
-                BallBounceAnim(dir);
-                
-                var transform = _moveEntity.Transform;
+                var transform = _moveEntity.HandlerTransform;
 
                 while (transform.position.Distance(targetPosition) > 0.01f)
                 {
@@ -91,13 +89,6 @@ namespace UnityBase.Command
                 //Debug.Log(e);
                 
             }
-        }
-
-        private void BallBounceAnim(Vector3 dir)
-        {
-            _moveEntity.MeshHandlerTransform.DOComplete();
-            _moveEntity.MeshHandlerTransform.DOPunchScale(dir, 0.35f, 25, 5f)
-                                            .OnComplete(()=> _moveEntity.MeshHandlerTransform.localScale = Vector3.one);
         }
     }
 }

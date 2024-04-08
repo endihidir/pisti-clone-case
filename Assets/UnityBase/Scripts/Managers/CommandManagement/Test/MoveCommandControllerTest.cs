@@ -13,8 +13,8 @@ namespace UnityBase.Command
         private readonly ICommandRecorder _commandRecorder;
 
         private ICommand _moveCommand;
-        public Transform MeshHandlerTransform => transform;
-        public Transform Transform => transform;
+        public Transform HandlerTransform => transform;
+        public Transform ObjectTransform => transform;
         public Vector3 TargetPosition => Input.mousePosition;
         public float Speed => 0.2f;
         public bool CanPassNextMovementInstantly => true;

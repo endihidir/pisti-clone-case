@@ -6,17 +6,17 @@ using UnityEngine;
 
 namespace UnityBase.Manager
 {
-    public class PopUpManager : IPopUpDataService, IAppPresenterDataService
+    public class PopUpManager : IPopUpDataService, IAppConstructorDataService
     {
         private Transform _popUpParent, _settingsPopUpParent;
 
         private readonly IPoolDataService _poolDataService;
 
-        public PopUpManager(ManagerDataHolderSO managerDataHolderSo, IPoolDataService poolDataService)
+        public PopUpManager(AppDataHolderSO appDataHolderSo, IPoolDataService poolDataService)
         {
             _poolDataService = poolDataService;
-            _popUpParent = managerDataHolderSo.popUpManagerSo.popUpParent;
-            _settingsPopUpParent = managerDataHolderSo.popUpManagerSo.settingsPopUpParent;
+            _popUpParent = appDataHolderSo.popUpManagerSo.popUpParent;
+            _settingsPopUpParent = appDataHolderSo.popUpManagerSo.settingsPopUpParent;
         }
 
         public void Initialize() { }
@@ -55,6 +55,9 @@ namespace UnityBase.Manager
             _poolDataService.HideAllObjectsOfType<PopUp>(duration, delay);
         }
         
-        public void RemovePopUpPool<T>(bool readLogs = false) where T : PopUp => _poolDataService.RemovePool<T>(readLogs);
+        public void RemovePopUpPool<T>(bool readLogs = false) where T : PopUp
+        {
+            _poolDataService.RemovePool<T>(readLogs);
+        }
     }
 }
