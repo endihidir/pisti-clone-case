@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class CardViewController : MonoBehaviour, IPoolable, ICardAnimation
 {
+    [SerializeField] private int _index;
     [SerializeField] private RectTransform _cardRectTransform;
     [SerializeField] private Transform _cardUIHandlerTransform;
     [SerializeField] private CardView[] _cardViews;
@@ -17,6 +18,7 @@ public class CardViewController : MonoBehaviour, IPoolable, ICardAnimation
     private ICardBehaviour _cardBehaviour;
     private ICardAnimationService _cardAnimationService;
     public ICardBehaviour CardBehaviour => _cardBehaviour;
+    public int Index => _index;
 
     #region POOL
     public Component PoolableObject => this;
@@ -60,15 +62,15 @@ public class CardViewController : MonoBehaviour, IPoolable, ICardAnimation
         onComplete?.Invoke();
     }
     
-    public void FlipCard(FlipSide flipSide)
+    public void FlipCard(CardFace cardFace)
     {
-        var cardSprite = flipSide == FlipSide.Back ? _cardBackSprite : _cardBehaviour.CardSprite;
+        var cardSprite = cardFace == CardFace.Back ? _cardBackSprite : _cardBehaviour.CardSprite;
         
         _selectedCardView.SetCardSprite(cardSprite);
 
         if (_selectedCardView is NumberedCardView numberedCardView)
         {
-            numberedCardView.EnableText(flipSide == FlipSide.Face);
+            numberedCardView.EnableText(cardFace == CardFace.Front);
         }
     }
 
@@ -93,6 +95,7 @@ public class CardViewController : MonoBehaviour, IPoolable, ICardAnimation
         EnableCardView(_selectedCardView, true);
     }
 
+    public void SetIndex(int index) => _index = index;
     private T GetCardView<T>() where T : CardView => _cardViews.FirstOrDefault(x => x is T) as T;
     private void EnableCardView(CardView cardView, bool enable) => cardView.SetActive(enable);
     private void DisableAllViews() => _cardViews.ForEach(cardView => EnableCardView(cardView, false));

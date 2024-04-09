@@ -4,7 +4,7 @@ using UnityBase.Extensions;
 using UnityBase.ManagerSO;
 using UnityBase.Service;
 
-public class CardManager : ICardService, IGameplayConstructorService
+public class CardManager : ICardManagerService, IGameplayConstructorService
 {
     public const int CARD_COUNT = 52;
     
@@ -12,6 +12,7 @@ public class CardManager : ICardService, IGameplayConstructorService
     private readonly CardDistrubitionManagerSO _cardDistrubitionManagerSo;
     private readonly CardBehaviourFactory _cardBehaviourFactory;
     private readonly IDictionary<int, ICardBehaviour> _cardBehaviours;
+    private readonly IDictionary<int, CardViewController> _cardViewControllers;
     private readonly ICardPoolService _cardPoolService;
     private readonly CardDefinitionSO[] _cardDefinitions;
     private readonly CardType[] _numberedCardTypes = { CardType.Club, CardType.Diamond, CardType.Heart, CardType.Spade };
@@ -84,7 +85,7 @@ public class CardManager : ICardService, IGameplayConstructorService
         {
             cardViewController.Initialize(cardBehaviour);
             
-            cardViewController.FlipCard(FlipSide.Back);
+            cardViewController.FlipCard(CardFace.Back);
         }
 
         return true;

@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 
-public abstract class PlayableCardDeck : ICardDeck
+public abstract class BaseCardDeck : IBaseCardDeck
 {
     protected readonly Stack<ICardBehaviour> _cardBehaviours;
 
     private ICardBehaviour _cardBehaviour;
     
-    public PlayableCardDeck() => _cardBehaviours = new Stack<ICardBehaviour>();
+    public BaseCardDeck() => _cardBehaviours = new Stack<ICardBehaviour>();
 
     public void SelectCard(ICardBehaviour cardBehaviour) => _cardBehaviour = cardBehaviour;
 
