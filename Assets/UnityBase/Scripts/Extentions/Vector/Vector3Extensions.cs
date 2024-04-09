@@ -85,11 +85,11 @@ namespace UnityBase.Extensions
 				case PositionSpace.CanvasSpace:
 					return v;
 				case PositionSpace.ScreenSpace:
-					return v.ScreenToCanvas(Camera.allCameras[0]);
+					return v.ScreenToCanvas(Camera.main);
 				case PositionSpace.WorldSpace:
-					return v.WorldToScreen(Camera.allCameras[0]);
+					return v.WorldToScreen(Camera.main);
 				case PositionSpace.ViewPortSpace:
-					return v.ViewPortToScreen(Camera.allCameras[0]);
+					return v.ViewPortToScreen(Camera.main);
 				default:
 					return v;
 			}

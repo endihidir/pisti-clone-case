@@ -9,4 +9,9 @@ public abstract class CardView : MonoBehaviour
     {
         _cardImage.sprite = sprite;
     }
+
+    public void SetActive(bool enable)
+    {
+        gameObject.SetActive(enable);
+    }
 }

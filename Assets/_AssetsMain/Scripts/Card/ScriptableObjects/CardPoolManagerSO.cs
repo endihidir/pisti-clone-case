@@ -6,6 +6,6 @@ public class CardPoolManagerSO : ScriptableObject
     public Transform cardOnScreenParent;
     public void Initialize()
     {
-        cardOnScreenParent = FindObjectOfType<Tag_CardViewParent>()?.transform;
+        cardOnScreenParent = FindObjectOfType<Tag_CardDistributionArea>()?.transform;
     }
 }

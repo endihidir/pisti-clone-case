@@ -7,5 +7,5 @@ public class CardDefinitionSO : ScriptableObject
     
     public CardType type = CardType.None;
 
-    public Sprite cardSprite;
+    public Sprite sprite;
 }

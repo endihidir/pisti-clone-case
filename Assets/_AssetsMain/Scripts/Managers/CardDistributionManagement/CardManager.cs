@@ -4,7 +4,7 @@ using UnityBase.Extensions;
 using UnityBase.ManagerSO;
 using UnityBase.Service;
 
-public class CardManager : ICardDataService, IGameplayConstructorService
+public class CardManager : ICardService, IGameplayConstructorService
 {
     public const int CARD_COUNT = 52;
     
@@ -12,22 +12,22 @@ public class CardManager : ICardDataService, IGameplayConstructorService
     private readonly CardDistrubitionManagerSO _cardDistrubitionManagerSo;
     private readonly CardBehaviourFactory _cardBehaviourFactory;
     private readonly IDictionary<int, ICardBehaviour> _cardBehaviours;
-    private readonly ICardPoolDataService _cardPoolDataService;
+    private readonly ICardPoolService _cardPoolService;
     private readonly CardDefinitionSO[] _cardDefinitions;
-    
-    private HashSet<int> _cardIndexes; // Maybe you can use Stack
+    private readonly CardType[] _numberedCardTypes = { CardType.Club, CardType.Diamond, CardType.Heart, CardType.Spade };
+    private Stack<int> _cardIndexes;
 
-    public CardManager(GameplayDataHolderSO gameplayDataHolderSo, CardBehaviourFactory cardBehaviourFactory, ICardPoolDataService cardPoolDataService)
+    public CardManager(GameplayDataHolderSO gameplayDataHolderSo, CardBehaviourFactory cardBehaviourFactory, ICardPoolService cardPoolService)
     {
         _cardDistrubitionManagerSo = gameplayDataHolderSo.cardDistrubitionManagerSo;
         _cardBehaviourFactory = cardBehaviourFactory;
-        _cardPoolDataService = cardPoolDataService;
+        _cardPoolService = cardPoolService;
         
         _cardDefinitions = _cardDistrubitionManagerSo.cardDefinitions;
         _deckCount = _cardDistrubitionManagerSo.deckCount;
 
         _cardBehaviours = new Dictionary<int, ICardBehaviour>();
-        _cardIndexes = new HashSet<int>(_deckCount * CARD_COUNT);
+        _cardIndexes = new Stack<int>();
     }
     
     public void Initialize()
@@ -51,16 +51,9 @@ public class CardManager : ICardDataService, IGameplayConstructorService
             {
                 _cardBehaviours[index] = _cardBehaviourFactory.Create(cardDefinition);
 
-                // NOTE: If you seperate NumberedCardBehaviour and SpecialCardBehaviour you could shoten below statement think about it!!!
-                
-                var cardNumber = 0;
-                
-                if (cardDefinition.type is CardType.Club or CardType.Diamond or CardType.Heart or CardType.Spade)
-                {
-                    cardNumber = j + 1;
-                }
+                var cardNumber = IsNumberedCard(cardDefinition.type) ? (j + 1) : 0;
 
-                _cardBehaviours[index].Initialize(cardNumber, cardDefinition.type, cardDefinition.cardSprite);
+                _cardBehaviours[index].Initialize(cardNumber, cardDefinition.type, cardDefinition.sprite);
 
                 index++;
             }
@@ -71,10 +64,10 @@ public class CardManager : ICardDataService, IGameplayConstructorService
     {
         _cardIndexes.Clear();
         
-        for (int i = 0; i < _cardIndexes.Count; i++) 
-            _cardIndexes.Add(i);
+        for (int i = 0; i < _deckCount * CARD_COUNT; i++) 
+            _cardIndexes.Push(i);
 
-        _cardIndexes = _cardIndexes.Shuffle().ToHashSet();
+        _cardIndexes = _cardIndexes.Shuffle();
     }
 
     public bool TryGetCardObject(out CardViewController cardViewController)
@@ -83,17 +76,19 @@ public class CardManager : ICardDataService, IGameplayConstructorService
         
         if (_cardIndexes.Count < 1) return false;
         
-        var index = _cardIndexes.FirstOrDefault();
+        var index = _cardIndexes.Pop();
 
-        cardViewController = _cardPoolDataService.GetCardView<CardViewController>();
+        cardViewController = _cardPoolService.GetCardView<CardViewController>();
             
         if (_cardBehaviours.TryGetValue(index, out var cardBehaviour))
         {
             cardViewController.Initialize(cardBehaviour);
-        }
             
-        _cardIndexes.Remove(0);
+            cardViewController.FlipCard(FlipSide.Back);
+        }
 
         return true;
     }
+
+    public bool IsNumberedCard(CardType cardType) => _numberedCardTypes.Contains(cardType);
 }

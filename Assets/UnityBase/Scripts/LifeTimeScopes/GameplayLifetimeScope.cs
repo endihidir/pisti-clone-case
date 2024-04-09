@@ -38,6 +38,7 @@ namespace UnityBase.BaseLifetimeScope
             builder.Register<GameplayManager>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<CardManager>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<CardPoolManager>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<CardAnimationProvider>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<CardBehaviourFactory>(Lifetime.Singleton);
         }
         

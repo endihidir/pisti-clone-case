@@ -12,8 +12,11 @@ public class NumberedCardView : CardView
     }
 #endif
 
-    public void SetNumber(int number)
+    public NumberedCardView SetNumber(int number)
     {
         _numberTxt.text = number.ToString("0");
+        return this;
     }
+
+    public void EnableText(bool enable) => _numberTxt.gameObject.SetActive(enable);
 }

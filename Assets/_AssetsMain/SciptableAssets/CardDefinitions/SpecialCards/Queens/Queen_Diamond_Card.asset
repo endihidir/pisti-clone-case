@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   count: 1
   type: 14
-  cardSprite: {fileID: 21300000, guid: f58b7ec73713f214fa0dda1df873ab64, type: 3}
+  sprite: {fileID: 21300000, guid: f58b7ec73713f214fa0dda1df873ab64, type: 3}

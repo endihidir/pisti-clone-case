@@ -3,14 +3,16 @@ using UnityBase.ManagerSO;
 using UnityBase.Service;
 using UnityEngine;
 
-public class CardPoolManager : ICardPoolDataService, IGameplayConstructorService
+public class CardPoolManager : ICardPoolService, IGameplayConstructorService
 {
     private readonly IPoolDataService _poolDataService;
     
     private Transform _cardViewParent;
 
-    public CardPoolManager(GameplayDataHolderSO gameplayDataHolderSo,IPoolDataService poolDataService)
+    public CardPoolManager(GameplayDataHolderSO gameplayDataHolderSo, IPoolDataService poolDataService)
     {
+        _cardViewParent = gameplayDataHolderSo.cardPoolManagerSo.cardOnScreenParent;
+        
         _poolDataService = poolDataService;
     }
     public void Initialize() { }
@@ -20,9 +22,9 @@ public class CardPoolManager : ICardPoolDataService, IGameplayConstructorService
     public T GetCardView<T>(bool show = true, float duration = 0.2f, float delay = 0) where T : CardViewController
     {
         var cardView = _poolDataService.GetObject<T>(show, duration, delay);
-
+        cardView.transform.SetParent(_cardViewParent);
         cardView.ResetCardViewSize();
-
+        cardView.transform.localPosition = Vector3.zero;
         return cardView;
     }
 
