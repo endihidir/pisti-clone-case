@@ -1,10 +1,9 @@
 ﻿
 namespace UnityBase.StateMachineCore
 {
-    internal interface IStateMachine<T> where T : StateMachine
+    public interface IStateMachine
     {
-        public IState<T> CurrentState { get; protected set; }
-        public void OnUpdate(float deltaTime);
-        public bool TrySetState(IState<T> state);
+        public IState CurrentGameplayState { get; }
+        public void ChangeState(IState state);
     }
 }

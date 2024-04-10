@@ -1,43 +1,64 @@
 using System;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
 
 public class CardAnimationProvider : ICardAnimationService
 {
-    public ICardAnimation CardAnimation { get; }
+    private readonly ICardEffect _cardEffect;
 
     private Transform _moveTransform, _flipTransform;
-
     private Tween _cardMoveTween, _cardFlipTween;
 
-    public CardAnimationProvider(ICardAnimation cardAnimation)
+    public CardAnimationProvider(ICardEffect cardEffect)
     {
-        CardAnimation = cardAnimation;
-        _moveTransform = CardAnimation.CardMoveTransform;
-        _flipTransform = CardAnimation.CardFlipTransform;
+        _cardEffect = cardEffect;
+        _moveTransform = _cardEffect.CardMoveTransform;
+        _flipTransform = _cardEffect.CardFlipTransform;
     }
     
-    public void Move(Vector3 pos, float duration, Ease ease, float delay = 0f, Action onComplete = default)
+    public async UniTask MoveToTargetLocal(Transform target, float duration, Ease ease, float delay = 0f, Action onComplete = default)
     {
         _cardMoveTween?.Kill();
+        
+        _moveTransform.SetParent(target);
 
-        _cardMoveTween = _moveTransform.DOMove(pos, duration)
-                                   .SetEase(ease)
-                                   .SetDelay(delay)
-                                   .OnComplete(() => onComplete?.Invoke());
+        _cardMoveTween = DOTween.Sequence()
+                                .AppendInterval(delay)
+                                .Append(_moveTransform.DOLocalMove(Vector3.zero, duration).SetEase(ease))
+                                .Join(_moveTransform.DOLocalRotate(Vector3.zero, duration).SetEase(ease))
+                                .AppendCallback(() => onComplete?.Invoke());
+
+        await _cardMoveTween.AsyncWaitForCompletion().AsUniTask();
     }
 
-    public void Flip(CardFace cardFace, float duration, Ease ease, float delay = 0f, Action onComplete = default)
+    public async UniTask Move(Vector3 pos, float duration, Ease ease, float delay = 0, Action onComplete = default)
+    {
+        _cardMoveTween?.Kill();
+        
+        _cardMoveTween = _moveTransform.DOMove(pos, duration)
+                                       .SetEase(ease)
+                                       .SetDelay(delay)
+                                       .OnComplete(() => onComplete?.Invoke());
+        
+        await _cardMoveTween.AsyncWaitForCompletion().AsUniTask();
+    }
+
+    public async UniTask Flip(CardFace cardFace, float duration, Ease ease, float delay = 0f, Action onComplete = default)
     {
         _cardFlipTween?.Kill();
 
         _cardFlipTween = DOTween.Sequence()
                             .AppendInterval(delay)
                             .Append(_flipTransform.DORotate(Vector3.up * 90f, duration).SetEase(ease))
-                            .AppendCallback(()=> CardAnimation.FlipCard(cardFace))
+                            .AppendCallback(()=> Flip(cardFace))
                             .Append(_flipTransform.DORotate(Vector3.up * 0f, duration).SetEase(ease))
                             .AppendCallback(()=> onComplete?.Invoke());
+        
+        await _cardFlipTween.AsyncWaitForCompletion().AsUniTask();
     }
+
+    public void Flip(CardFace cardFace) => _cardEffect.FlipCard(cardFace);
 
     public void Dispose()
     {

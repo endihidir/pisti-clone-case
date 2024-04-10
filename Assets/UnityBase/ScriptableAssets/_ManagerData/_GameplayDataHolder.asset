@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 288ada53a45b4d1db9caf0c4ee190aea, type: 3}
   m_Name: _GameplayDataHolder
   m_EditorClassIdentifier: 
-  cardDistrubitionManagerSo: {fileID: 11400000, guid: c8f2b5e71b0db5f4ca494c42873a7343,
-    type: 2}
+  cardContainerSo: {fileID: 11400000, guid: c8f2b5e71b0db5f4ca494c42873a7343, type: 2}
   cardPoolManagerSo: {fileID: 11400000, guid: 5ce314683af8ac6498acb3a4180a565d, type: 2}
+  gameplayStateMachineSo: {fileID: 11400000, guid: 559a07e7ba83d6549b3a0f78b24c1631,
+    type: 2}

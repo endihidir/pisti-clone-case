@@ -8,7 +8,7 @@ using VContainer;
 public class CardTest : MonoBehaviour
 {
     [Inject]
-    private readonly ICardManagerService _cardManagerService;
+    private readonly ICardContainer _cardContainer;
 
     private Stack<CardViewController> _cardViewController = new Stack<CardViewController>();
 
@@ -17,7 +17,7 @@ public class CardTest : MonoBehaviour
     [Button]
     public void SpawnCardRandomPos()
     {
-        var canGet = _cardManagerService.TryGetCardObject(out var cardViewController);
+        var canGet = _cardContainer.TryGetRandomCard(out var cardViewController);
 
         if (canGet)
         {

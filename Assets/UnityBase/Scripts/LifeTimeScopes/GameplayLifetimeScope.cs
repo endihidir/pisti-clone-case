@@ -36,11 +36,10 @@ namespace UnityBase.BaseLifetimeScope
         private void RegisterSingletonServices(IContainerBuilder builder)
         {
             builder.Register<GameplayManager>(Lifetime.Singleton).AsImplementedInterfaces();
-            builder.Register<CardManager>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<GameplayStateMachine>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<CardContainer>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<CardPoolManager>(Lifetime.Singleton).AsImplementedInterfaces();
-            builder.Register<CardAnimationProvider>(Lifetime.Singleton).AsImplementedInterfaces();
-            builder.Register<PlayerDeckController>(Lifetime.Singleton).AsImplementedInterfaces();
-            builder.Register<OpponentController>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<DiscardDeckController>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<CardBehaviourFactory>(Lifetime.Singleton);
         }
         
