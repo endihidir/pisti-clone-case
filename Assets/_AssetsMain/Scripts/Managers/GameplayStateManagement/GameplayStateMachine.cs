@@ -42,10 +42,11 @@ public class GameplayStateMachine : IStateMachine, ITickable, IGameplayConstruct
         _opponentDecks = new IUserDeck[_opponentCount];
         _opponentMoveStates = new IState[_opponentCount];
 
-        for (int i = 1; i <= _opponentCount; i++)
+        for (int i = 0; i < _opponentCount; i++)
         {
-            var opponentSlot = _gameplayStateMachineSo.GetOpponentDeckViewBy(i).Slots;
-            _opponentDecks[i] = new UserDeckController(i, opponentSlot);
+            var userID = i + 1;
+            var opponentSlot = _gameplayStateMachineSo.GetOpponentDeckViewBy(userID).Slots;
+            _opponentDecks[i] = new UserDeckController(userID, opponentSlot);
             _opponentMoveStates[i] = new OpponentMoveState(_opponentDecks[i]);
         }
 
@@ -63,7 +64,7 @@ public class GameplayStateMachine : IStateMachine, ITickable, IGameplayConstruct
     {
         _playerMoveState.OnStateComplete += OnPlayerMoveStateComplete;
         
-        for (int i = 1; i <= _opponentCount; i++) 
+        for (int i = 0; i < _opponentCount; i++) 
             _opponentMoveStates[i].OnStateComplete += OnOpponentMoveStateComplete;
 
         _cardDistributionState.OnStateComplete += OnDistributionStateComplete;
@@ -71,7 +72,7 @@ public class GameplayStateMachine : IStateMachine, ITickable, IGameplayConstruct
         _resultCalculationState.OnStateComplete += OnResultCalculated;
         
         _gameStateBinding.Add(OnGameplayStateChanged);
-        EventBus<GameStateData>.AddListener(_gameStateBinding, GameStateData.GetChannel(TransitionState.End));
+        EventBus<GameStateData>.AddListener(_gameStateBinding, GameStateData.GetChannel(TransitionState.Middle));
     }
 
     private void OnGameplayStateChanged(GameStateData gameStateData)
@@ -161,13 +162,13 @@ public class GameplayStateMachine : IStateMachine, ITickable, IGameplayConstruct
     {
         _playerMoveState.OnStateComplete -= OnPlayerMoveStateComplete;
         
-        for (int i = 1; i <= _opponentCount; i++) 
+        for (int i = 0; i < _opponentCount; i++) 
             _opponentMoveStates[i].OnStateComplete -= OnOpponentMoveStateComplete;
         
         _cardDistributionState.OnStateComplete -= OnDistributionStateComplete;
         _cardCollectingState.OnStateComplete -= OnCollectingStateComplete;
         
         _gameStateBinding.Remove(OnGameplayStateChanged);
-        EventBus<GameStateData>.RemoveListener(_gameStateBinding, GameStateData.GetChannel(TransitionState.End));
+        EventBus<GameStateData>.RemoveListener(_gameStateBinding, GameStateData.GetChannel(TransitionState.Middle));
     }
 }

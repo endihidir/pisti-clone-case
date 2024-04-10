@@ -254,7 +254,7 @@ PrefabInstance:
     - target: {fileID: 2463069712164727954, guid: 23dd096c1fceacb478eee0ab4a2d7e0a,
         type: 3}
       propertyPath: _slotOffset
-      value: 10
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 8930829184060911176, guid: 23dd096c1fceacb478eee0ab4a2d7e0a,
         type: 3}
@@ -612,7 +612,7 @@ PrefabInstance:
     - target: {fileID: 5154923552695525104, guid: 2f7bf29c34180444d8666963bcf1b198,
         type: 3}
       propertyPath: _slotOffset
-      value: 10
+      value: 100
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

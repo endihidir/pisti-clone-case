@@ -12,7 +12,7 @@ public abstract class DeckView : MonoBehaviour
     {
         foreach (var slot in _slots)
         {
-            slot.up += Vector3.up * _slotOffset;
+            slot.localPosition += slot.up * _slotOffset;
         }
     }
 }
