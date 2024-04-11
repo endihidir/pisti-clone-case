@@ -1,21 +1,19 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityBase.Extensions;
 using UnityBase.ManagerSO;
 using UnityBase.Service;
 
 public class CardContainer : ICardContainer, IGameplayConstructorService
 {
-    public const int CARD_COUNT = 52;
+    private const int CARD_COUNT = 52;
     
-    private readonly int _deckCount;
+    private readonly int _totalDeckCount;
     private readonly CardContainerSO _cardContainerSo;
     private readonly CardBehaviourFactory _cardBehaviourFactory;
     private readonly IDictionary<int, ICardBehaviour> _cardBehaviours;
     private readonly IDictionary<int, CardViewController> _cardViewControllers;
     private readonly ICardPoolService _cardPoolService;
     private readonly CardDefinitionSO[] _cardDefinitions;
-    private readonly CardType[] _numberedCardTypes = { CardType.Club, CardType.Diamond, CardType.Heart, CardType.Spade };
     private Stack<int> _cardIndexes;
 
     public CardContainer(GameplayDataHolderSO gameplayDataHolderSo, CardBehaviourFactory cardBehaviourFactory, ICardPoolService cardPoolService)
@@ -25,7 +23,7 @@ public class CardContainer : ICardContainer, IGameplayConstructorService
         _cardPoolService = cardPoolService;
         
         _cardDefinitions = _cardContainerSo.cardDefinitions;
-        _deckCount = _cardContainerSo.deckCount;
+        _totalDeckCount = _cardContainerSo.totalDeckCount;
 
         _cardViewControllers = new Dictionary<int, CardViewController>();
         _cardBehaviours = new Dictionary<int, ICardBehaviour>();
@@ -45,17 +43,19 @@ public class CardContainer : ICardContainer, IGameplayConstructorService
     {
         var index = 0;
 
-        foreach (var cardDefinition in _cardDefinitions)
+        for (var i = 0; i < _cardDefinitions.Length; i++)
         {
-            var cardCount = cardDefinition.count * _deckCount;
+            var cardDefinition = _cardDefinitions[i];
             
+            var cardCount = cardDefinition.count * _totalDeckCount;
+
             for (int j = 0; j < cardCount; j++)
             {
                 _cardBehaviours[index] = _cardBehaviourFactory.Create(cardDefinition);
 
-                var cardNumber = IsNumberedCard(cardDefinition.type) ? (j + 1) : 0;
+                var cardNumber = _cardBehaviours[index] is NumberedCard ? (j + 1) : 0;
 
-                _cardBehaviours[index].Initialize(index, cardNumber, cardDefinition.type, cardDefinition.sprite);
+                _cardBehaviours[index].Initialize(index, cardNumber, cardDefinition.type);
 
                 index++;
             }
@@ -66,38 +66,35 @@ public class CardContainer : ICardContainer, IGameplayConstructorService
     {
         _cardIndexes.Clear();
         
-        for (int i = 0; i < _deckCount * CARD_COUNT; i++) 
+        for (int i = 0; i < _totalDeckCount * CARD_COUNT; i++) 
             _cardIndexes.Push(i);
 
         _cardIndexes = _cardIndexes.Shuffle();
     }
 
-    public bool TryGetRandomCard(out CardViewController cardViewController)
+    public bool TryGetRandomCard(out ICardBehaviour cardBehaviour)
     {
-        cardViewController = null;
+        cardBehaviour = null;
         
-        if (_cardIndexes.Count < 1) return false;
-        
+        if (IsAllCardsFinished()) return false;
+
         var index = _cardIndexes.Pop();
 
-        cardViewController = _cardPoolService.GetCardView<CardViewController>();
+        var cardViewController = _cardPoolService.GetCardView<CardViewController>();
             
-        if (_cardBehaviours.TryGetValue(index, out var cardBehaviour))
+        if (_cardBehaviours.TryGetValue(index, out cardBehaviour))
         {
             cardViewController.Initialize(cardBehaviour);
             
             cardViewController.FlipCard(CardFace.Back);
 
             _cardViewControllers[index] = cardViewController;
+            
+            return true;
         }
 
-        return true;
+        return false;
     }
 
-    public bool TryGetCardBy(int index, out CardViewController cardViewController)
-    {
-        return _cardViewControllers.TryGetValue(index, out cardViewController);
-    }
-
-    public bool IsNumberedCard(CardType cardType) => _numberedCardTypes.Contains(cardType);
+    public bool IsAllCardsFinished() => _cardIndexes.Count < 1;
 }

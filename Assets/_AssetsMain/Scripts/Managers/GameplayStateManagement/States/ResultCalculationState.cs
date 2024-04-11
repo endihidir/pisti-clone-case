@@ -1,5 +1,6 @@
 using System;
 using UnityBase.StateMachineCore;
+using UnityEngine;
 
 public class ResultCalculationState : IState
 {
@@ -16,7 +17,7 @@ public class ResultCalculationState : IState
     
     public void OnEnter()
     {
-        
+        Debug.Log("a");
     }
 
     public void OnUpdate(float deltaTime)

@@ -1,4 +1,4 @@
-﻿public class DiamondCard : CardBehaviour
+﻿public class DiamondCard : NumberedCard
 {
     public override int GetCardPoint() => CardNumber switch
     {

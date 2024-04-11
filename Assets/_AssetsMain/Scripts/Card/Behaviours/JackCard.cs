@@ -1,4 +1,4 @@
-﻿public class JackCard : CardBehaviour
+﻿public class JackCard : SpecialCard
 {
     public override int GetCardPoint() => 1;
 }

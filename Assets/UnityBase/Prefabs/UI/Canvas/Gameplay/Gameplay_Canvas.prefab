@@ -291,6 +291,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2777816043287028156}
     m_Modifications:
+    - target: {fileID: 309127414505655976, guid: b115b4a13bba940328822803fb74d215,
+        type: 3}
+      propertyPath: m_Name
+      value: OpponentBoardView_1
+      objectReference: {fileID: 0}
     - target: {fileID: 1285356033817277464, guid: b115b4a13bba940328822803fb74d215,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
@@ -441,6 +446,11 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6896261396790224243, guid: b115b4a13bba940328822803fb74d215,
+        type: 3}
+      propertyPath: m_Name
+      value: PlayerBoardView
+      objectReference: {fileID: 0}
     - target: {fileID: 7869297498202481190, guid: b115b4a13bba940328822803fb74d215,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
@@ -475,6 +485,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 8575947736133030833, guid: b115b4a13bba940328822803fb74d215,
+        type: 3}
+      propertyPath: m_Name
+      value: OpponentBoardView
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

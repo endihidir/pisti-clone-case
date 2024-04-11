@@ -1,22 +1,22 @@
 using System;
 using System.Linq;
+using Sirenix.OdinInspector;
 using Sirenix.Utilities;
 using UnityBase.Pool;
 using UnityEngine;
 
-public class CardViewController : MonoBehaviour, IPoolable, ICardEffect
+public class CardViewController : MonoBehaviour, IPoolable, ICardAnimation, ICardInputDetector
 {
     [SerializeField] private RectTransform _cardRectTransform;
     [SerializeField] private Transform _cardFlipTrinsform;
-    [SerializeField] private Sprite _cardBackSprite;
-    [SerializeField] private CardView _selectedCardView;
+    [SerializeField] private CardAtlasSO _cardAtlas;
     [SerializeField] private CardView[] _cardViews;
+    [ReadOnly, SerializeField] private CardView _selectedCardView;
     
+    private Sprite _frontFaceSprite;
     private Vector2 _defaultSizeDelta;
-    private ICardBehaviour _cardBehaviour;
     private ICardAnimationService _cardAnimationService;
     
-    public ICardBehaviour CardBehaviour => _cardBehaviour;
     public Component PoolableObject => this;
     public bool IsActive => isActiveAndEnabled;
     public bool IsUnique => false;
@@ -24,35 +24,19 @@ public class CardViewController : MonoBehaviour, IPoolable, ICardEffect
     public Transform CardMoveTransform => transform;
     public Transform CardFlipTransform => _cardFlipTrinsform;
 
-#if UNITY_EDITOR
-    protected virtual void OnValidate()
+    private void Awake()
     {
-        _cardRectTransform = GetComponent<RectTransform>();
-        _cardViews = GetComponentsInChildren<CardView>(true);
+        _defaultSizeDelta = _cardRectTransform.sizeDelta;
     }
-#endif
-    
-    private void Awake() => _defaultSizeDelta = _cardRectTransform.sizeDelta;
-    
+
     public void Initialize(ICardBehaviour cardBehaviour)
     {
-        _cardBehaviour = cardBehaviour;
-        
+        cardBehaviour.CardInputDetector = this;
         _cardAnimationService = new CardAnimationProvider(this);
-        _cardBehaviour.CardAnimationService = _cardAnimationService;
-
+        cardBehaviour.CardAnimationService = _cardAnimationService;
         DisableAllViews();
-
-        if (_cardBehaviour.CardNumber > 0)
-        {
-            _selectedCardView = GetCardView<NumberedCardView>().SetNumber(_cardBehaviour.CardNumber);
-        }
-        else
-        {
-            _selectedCardView = GetCardView<SpecialCardView>();
-        }
-        
-        _selectedCardView.SetCardSprite(_cardBehaviour.CardSprite);
+        _selectedCardView = cardBehaviour.CardNumber > 0 ? GetCardView<NumberedCardView>().SetNumber(cardBehaviour.CardNumber) : GetCardView<SpecialCardView>();
+        _frontFaceSprite = _cardAtlas.GetSprite(cardBehaviour.CardType);
         EnableCardView(_selectedCardView, true);
     }
     
@@ -76,7 +60,7 @@ public class CardViewController : MonoBehaviour, IPoolable, ICardEffect
     
     public void FlipCard(CardFace cardFace)
     {
-        var cardSprite = cardFace == CardFace.Back ? _cardBackSprite : _cardBehaviour.CardSprite;
+        var cardSprite = cardFace == CardFace.Back ? _cardAtlas.GetSprite(CardType.Card_Back_Face) : _frontFaceSprite;
         
         _selectedCardView.SetCardSprite(cardSprite);
 
@@ -84,6 +68,12 @@ public class CardViewController : MonoBehaviour, IPoolable, ICardEffect
         {
             numberedCardView.EnableText(cardFace == CardFace.Front);
         }
+    }
+    
+    public bool IsInRange(Vector2 worldPos)
+    {
+        var localMousePos = _selectedCardView.RectTransform.InverseTransformPoint(worldPos);
+        return _selectedCardView.RectTransform.rect.Contains(localMousePos);
     }
 
     private T GetCardView<T>() where T : CardView => _cardViews.FirstOrDefault(x => x is T) as T;

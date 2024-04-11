@@ -4,98 +4,101 @@ using DG.Tweening;
 using UnityBase.StateMachineCore;
 
 public class CardDistributionState : IState
-{
+{ 
     public event Action OnStateComplete;
 
-    private bool _isFirstRound = true, _isAllCardsFinished;
-    public bool IsAllCardsFinished => _isAllCardsFinished;
+    private bool _isFirstRound = true;
+    public bool IsAllCardsFinished => _opponentDecks[^1].UserDeck.CardBehaviours.Count < 1;
 
     private readonly ICardContainer _cardContainer;
-    private readonly IUserDeck _playerDeck;
-    private readonly IUserDeck[] _opponentDecks;
+    private readonly IUserBoard _playerBoard;
+    private readonly IUserBoard[] _opponentDecks;
     private readonly IDiscardDeck _discardDeck;
+    private float _stateCompleteDelay;
 
-    public CardDistributionState(ICardContainer cardContainer, IUserDeck playerDeck, IUserDeck[] opponetsDeck, IDiscardDeck discardDeck)
+    public CardDistributionState(ICardContainer cardContainer, IUserBoard playerBoard, IUserBoard[] opponetsDeck, IDiscardDeck discardDeck)
     {
         _cardContainer = cardContainer;
-        _playerDeck = playerDeck;
+        _playerBoard = playerBoard;
         _opponentDecks = opponetsDeck;
         _discardDeck = discardDeck;
     }
     
     public async void OnEnter()
     {
-        await DistributeToDiscardDeck();
-
-        await DistributePlayerCards();
-
-        await DistributeOpponentsCards();
+        if (!_cardContainer.IsAllCardsFinished())
+        {
+            await DistributeToDiscardDeck();
+            await DistributeToPlayerDeck();
+            await DistributeToOpponentDeck();
+            await UniTask.WaitForSeconds(_stateCompleteDelay);
+        }
+        
+        OnStateComplete?.Invoke();
     }
 
     private async UniTask DistributeToDiscardDeck()
     {
-        if (_isFirstRound)
-        {
-            _isFirstRound = false;
-
-            var tasks = new UniTask[4];
-
-            for (int i = 0; i < 4; i++)
-            {
-                var canGet = _cardContainer.TryGetRandomCard(out var cardViewController);
-
-                if (canGet)
-                {
-                    var cardAnimationService = cardViewController.CardBehaviour.CardAnimationService;
-                    if (i > 2) cardAnimationService.Flip(CardFace.Front, 0.25f, Ease.InOutQuad, i * 0.15f);
-                    tasks[i] = cardAnimationService.Move(_discardDeck.Slots[0].position, 0.5f, Ease.InOutQuad, i * 0.15f);
-                }
-            }
-
-            await UniTask.WhenAll(tasks);
-        }
-    }
-    
-    private async UniTask DistributePlayerCards()
-    {
-        var tasks = new UniTask[4];
+        if (!_isFirstRound) return;
         
-        for (int i = 0; i < _playerDeck.Slots.Length; i++)
-        {
-            var canGet = _cardContainer.TryGetRandomCard(out var cardViewController);
+        _isFirstRound = false;
 
-            if (canGet)
-            {
-                var cardAnimationService = cardViewController.CardBehaviour.CardAnimationService;
-                cardAnimationService.Flip(CardFace.Front, 0.25f, Ease.InOutQuad, i * 0.15f);
-                cardAnimationService.Rotate(_playerDeck.Slots[i].rotation, 0.5f, Ease.InOutQuad, i * 0.15f);
-                tasks[i] = cardAnimationService.Move(_playerDeck.Slots[i].position, 0.5f, Ease.InOutQuad, i * 0.15f);
-            }
+        _stateCompleteDelay += CardConstants.DISTRIBUTION_DELAY / 3f;
+        
+        for (int i = 0; i < CardConstants.DISTRIBUTION_COUNT; i++)
+        {
+            if (!_cardContainer.TryGetRandomCard(out var cardBehaviour)) continue;
+            
+            _discardDeck.PushCard(cardBehaviour);
+            
+            var cardAnimationService = cardBehaviour.CardAnimationService;
+            if (i > 2) cardAnimationService.Flip(CardFace.Front, CardConstants.DISTRIBUTION_SPEED, Ease.InOutQuad, i * CardConstants.DISTRIBUTION_DELAY);
+            cardAnimationService.Move(_discardDeck.Slots[0].position, CardConstants.DISTRIBUTION_SPEED, Ease.InOutQuad, i * CardConstants.DISTRIBUTION_DELAY);
         }
 
-        await UniTask.WhenAll(tasks);
+        await UniTask.WaitForSeconds(CardConstants.DISTRIBUTION_SPEED + 0.1f);
     }
     
-    private async UniTask DistributeOpponentsCards()
+    private async UniTask DistributeToPlayerDeck()
     {
-        var tasks = new UniTask[4];
+        _stateCompleteDelay += CardConstants.DISTRIBUTION_DELAY / 3f;
+        
+        for (int i = 0; i < CardConstants.DISTRIBUTION_COUNT; i++)
+        {
+            if (!_cardContainer.TryGetRandomCard(out var cardBehaviour)) continue;
 
+            var playerDeck = _playerBoard.UserDeck;
+            playerDeck.AddCard(cardBehaviour);
+            
+            var cardAnimationService = cardBehaviour.CardAnimationService;
+            cardAnimationService.Flip(CardFace.Front, CardConstants.DISTRIBUTION_SPEED, Ease.InOutQuad, i * CardConstants.DISTRIBUTION_DELAY);
+            cardAnimationService.Rotate(playerDeck.Slots[i].rotation, CardConstants.DISTRIBUTION_SPEED, Ease.InOutQuad, i * CardConstants.DISTRIBUTION_DELAY);
+            cardAnimationService.Move(playerDeck.Slots[i].position, CardConstants.DISTRIBUTION_SPEED, Ease.InOutQuad, i * CardConstants.DISTRIBUTION_DELAY);
+        }
+
+        await UniTask.WaitForSeconds(CardConstants.DISTRIBUTION_SPEED + 0.1f);
+    }
+    
+    private async UniTask DistributeToOpponentDeck()
+    {
+        _stateCompleteDelay += CardConstants.DISTRIBUTION_DELAY / 3f;
+        
         foreach (var opponent in _opponentDecks)
         {
-            for (int i = 0; i < opponent.Slots.Length; i++)
+            for (int i = 0; i < CardConstants.DISTRIBUTION_COUNT; i++)
             {
-                var canGet = _cardContainer.TryGetRandomCard(out var cardViewController);
-
-                if (canGet)
-                {
-                    var cardAnimationService = cardViewController.CardBehaviour.CardAnimationService;
-                    cardAnimationService.Rotate(opponent.Slots[i].rotation, 0.5f, Ease.InOutQuad, i * 0.15f);
-                    tasks[i] = cardAnimationService.Move(opponent.Slots[i].position, 0.5f, Ease.InOutQuad, i * 0.15f);
-                }
+                if (!_cardContainer.TryGetRandomCard(out var cardBehaviour)) continue;
+                
+                var opponentDeck = opponent.UserDeck;
+                opponentDeck.AddCard(cardBehaviour);
+                
+                var cardAnimationService = cardBehaviour.CardAnimationService;
+                cardAnimationService.Rotate(opponentDeck.Slots[i].rotation, CardConstants.DISTRIBUTION_SPEED, Ease.InOutQuad, i * CardConstants.DISTRIBUTION_DELAY);
+                cardAnimationService.Move(opponentDeck.Slots[i].position, CardConstants.DISTRIBUTION_SPEED, Ease.InOutQuad, i * CardConstants.DISTRIBUTION_DELAY);
             }
+            
+            await UniTask.WaitForSeconds(CardConstants.DISTRIBUTION_SPEED + 0.1f);
         }
-
-        await UniTask.WhenAll(tasks);
     }
 
     public void OnUpdate(float deltaTime)
@@ -105,7 +108,7 @@ public class CardDistributionState : IState
 
     public void OnExit()
     {
-        
+        _stateCompleteDelay = 0f;
     }
 
     public void Reset()

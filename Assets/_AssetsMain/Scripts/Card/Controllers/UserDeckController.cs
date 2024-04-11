@@ -1,32 +1,39 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
+using System.Linq;
+using UnityBase.Extensions;
 using UnityEngine;
 
 public class UserDeckController : IUserDeck
 {
-    public int UserID { get;}
-    
-    private readonly List<CardBehaviour> _cardBehaviours;
+    private readonly List<ICardBehaviour> _cardBehaviours;
     private readonly Transform[] _slots;
     
-    public List<CardBehaviour> CardBehaviours => _cardBehaviours;
-    
+    public List<ICardBehaviour> CardBehaviours => _cardBehaviours;
     public Transform[] Slots => _slots;
-    public UserDeckController(int userID, Transform[] slots)
+    
+    public UserDeckController(Transform[] slots)
     {
-        UserID = userID;
         _slots = slots;
-        _cardBehaviours = new List<CardBehaviour>();
+        _cardBehaviours = new List<ICardBehaviour>();
     }
 
-    public void AddCard(CardBehaviour cardBehaviour)
+    public void AddCard(ICardBehaviour cardBehaviour) => _cardBehaviours.Add(cardBehaviour);
+    public void DropCard(ICardBehaviour cardBehaviour) => _cardBehaviours.Remove(cardBehaviour);
+    public bool TryGetRandomCard(out ICardBehaviour cardBehaviour)
     {
-        _cardBehaviours.Add(cardBehaviour);
-    }
+        var firstCard =  _cardBehaviours.Shuffle().FirstOrDefault();
 
-    public void DropCardTo(int index, IDiscardDeck visitor)
-    {
-        visitor.Visit(UserID, _cardBehaviours[index]);
+        cardBehaviour = null;
         
-        _cardBehaviours.RemoveAt(index);
+        if (firstCard != null)
+        {
+            cardBehaviour = firstCard;
+            _cardBehaviours.Remove(firstCard);
+            return true;
+        }
+        
+        return false;
     }
+
+    public bool ContainsCard(ICardBehaviour cardBehaviour) => _cardBehaviours.Contains(cardBehaviour);
 }

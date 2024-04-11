@@ -9,9 +9,9 @@ public class CardBehaviourFactory
             CardType.Heart => new HeartCard(),
             CardType.Spade => new SpadeCard(),
             
-            CardType.JackClub or CardType.JackDiamond or CardType.JackHeart or CardType.JackSpade => new JackCard(),
-            CardType.KingClub or CardType.KingDiamond or CardType.KingHeart or CardType.KingSpade => new KingCard(),
-            CardType.QueenClub or CardType.QueenDiamond or CardType.QueenHeart or CardType.QueenSpade => new QueenCard(),
+            CardType.Jack_Club or CardType.Jack_Diamond or CardType.Jack_Heart or CardType.Jack_Spade => new JackCard(),
+            CardType.King_Club or CardType.King_Diamond or CardType.King_Heart or CardType.King_Spade => new KingCard(),
+            CardType.Queen_Club or CardType.Queen_Diamond or CardType.Queen_Heart or CardType.Queen_Spade => new QueenCard(),
             
             _ => null
         };

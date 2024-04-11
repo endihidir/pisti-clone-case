@@ -6,6 +6,4 @@ public class CardDefinitionSO : ScriptableObject
     public int count = 1;
     
     public CardType type = CardType.None;
-
-    public Sprite sprite;
 }
