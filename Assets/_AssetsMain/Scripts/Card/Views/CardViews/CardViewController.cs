@@ -16,13 +16,17 @@ public class CardViewController : MonoBehaviour, IPoolable, ICardAnimation, ICar
     private Sprite _frontFaceSprite;
     private Vector2 _defaultSizeDelta;
     private ICardAnimationService _cardAnimationService;
+    private ICardInputDetectionService _cardInputDetectionService;
     
     public Component PoolableObject => this;
     public bool IsActive => isActiveAndEnabled;
     public bool IsUnique => false;
-    
+
+    public Sprite CardFrontFace => _frontFaceSprite;
+    public Sprite CardBackFace => _cardAtlas.GetSprite(CardType.Card_Back_Face);
     public Transform CardMoveTransform => transform;
     public Transform CardFlipTransform => _cardFlipTrinsform;
+    public CardView SelectedCardView => _selectedCardView;
 
     private void Awake()
     {
@@ -31,12 +35,18 @@ public class CardViewController : MonoBehaviour, IPoolable, ICardAnimation, ICar
 
     public void Initialize(ICardBehaviour cardBehaviour)
     {
-        cardBehaviour.CardInputDetector = this;
-        _cardAnimationService = new CardAnimationProvider(this);
-        cardBehaviour.CardAnimationService = _cardAnimationService;
         DisableAllViews();
+        
         _selectedCardView = cardBehaviour.CardNumber > 0 ? GetCardView<NumberedCardView>().SetNumber(cardBehaviour.CardNumber) : GetCardView<SpecialCardView>();
         _frontFaceSprite = _cardAtlas.GetSprite(cardBehaviour.CardType);
+        
+        _cardAnimationService = new CardAnimationProvider(this);
+        cardBehaviour.CardAnimationService = _cardAnimationService;
+        cardBehaviour.CardAnimationService.Flip(CardFace.Back);
+        
+        _cardInputDetectionService = new CardInputDetectionProvider(this);
+        cardBehaviour.CardInputDetectionService = _cardInputDetectionService;
+        
         EnableCardView(_selectedCardView, true);
     }
     
@@ -56,24 +66,6 @@ public class CardViewController : MonoBehaviour, IPoolable, ICardAnimation, ICar
     {
         gameObject.SetActive(false);
         onComplete?.Invoke();
-    }
-    
-    public void FlipCard(CardFace cardFace)
-    {
-        var cardSprite = cardFace == CardFace.Back ? _cardAtlas.GetSprite(CardType.Card_Back_Face) : _frontFaceSprite;
-        
-        _selectedCardView.SetCardSprite(cardSprite);
-
-        if (_selectedCardView is NumberedCardView numberedCardView)
-        {
-            numberedCardView.EnableText(cardFace == CardFace.Front);
-        }
-    }
-    
-    public bool IsInRange(Vector2 worldPos)
-    {
-        var localMousePos = _selectedCardView.RectTransform.InverseTransformPoint(worldPos);
-        return _selectedCardView.RectTransform.rect.Contains(localMousePos);
     }
 
     private T GetCardView<T>() where T : CardView => _cardViews.FirstOrDefault(x => x is T) as T;

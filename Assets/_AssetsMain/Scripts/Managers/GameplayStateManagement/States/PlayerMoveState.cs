@@ -34,7 +34,7 @@ public class PlayerMoveState : IState
             {
                 var cardBehaviour = playerDeck.CardBehaviours[i];
 
-                var inputDetector = cardBehaviour.CardInputDetector;
+                var inputDetector = cardBehaviour.CardInputDetectionService;
 
                 if (inputDetector.IsInRange(Input.mousePosition))
                 {

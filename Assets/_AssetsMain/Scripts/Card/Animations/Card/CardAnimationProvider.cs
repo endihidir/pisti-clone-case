@@ -6,8 +6,11 @@ using UnityEngine;
 public class CardAnimationProvider : ICardAnimationService
 {
     private readonly ICardAnimation _cardAnimation;
-
-    private Transform _moveTransform, _flipTransform;
+    private readonly Transform _moveTransform, _flipTransform;
+    private readonly CardView _selectedCardView;
+    private readonly Sprite _cardBackFace, _cardFrontFace;
+    private CardFace _currentCardFace;
+    
     private Tween _cardMoveTween, _cardFlipTween, _cardRotateTween, _siblingChangeDelayTween;
 
     public CardAnimationProvider(ICardAnimation cardAnimation)
@@ -15,11 +18,15 @@ public class CardAnimationProvider : ICardAnimationService
         _cardAnimation = cardAnimation;
         _moveTransform = _cardAnimation.CardMoveTransform;
         _flipTransform = _cardAnimation.CardFlipTransform;
+        _selectedCardView = _cardAnimation.SelectedCardView;
+        _cardFrontFace = _cardAnimation.CardFrontFace;
+        _cardBackFace = _cardAnimation.CardBackFace;
     }
 
     public async UniTask Move(Vector3 pos, float duration, Ease ease, float delay = 0, Action onComplete = default)
     {
         _cardMoveTween?.Kill();
+        _siblingChangeDelayTween?.Kill();
         
         _siblingChangeDelayTween = DOVirtual.DelayedCall(duration * 0.5f, () => _moveTransform.SetAsLastSibling());
         
@@ -46,6 +53,8 @@ public class CardAnimationProvider : ICardAnimationService
 
     public async UniTask Flip(CardFace cardFace, float duration, Ease ease, float delay = 0f, Action onComplete = default)
     {
+        if(_currentCardFace == cardFace) return;
+
         _cardFlipTween?.Kill();
 
         _cardFlipTween = DOTween.Sequence()
@@ -58,7 +67,19 @@ public class CardAnimationProvider : ICardAnimationService
         await _cardFlipTween.AsyncWaitForCompletion().AsUniTask();
     }
 
-    public void Flip(CardFace cardFace) => _cardAnimation.FlipCard(cardFace);
+    public void Flip(CardFace cardFace)
+    {
+        _currentCardFace = cardFace;
+        
+        var cardSprite = cardFace == CardFace.Back ? _cardBackFace : _cardFrontFace;
+        
+        _selectedCardView.SetCardSprite(cardSprite);
+
+        if (_selectedCardView is NumberedCardView numberedCardView)
+        {
+            numberedCardView.EnableText(cardFace == CardFace.Front);
+        }
+    }
 
     public void Dispose()
     {

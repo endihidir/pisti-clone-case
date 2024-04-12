@@ -85,8 +85,6 @@ public class CardContainer : ICardContainer, IGameplayConstructorService
         if (_cardBehaviours.TryGetValue(index, out cardBehaviour))
         {
             cardViewController.Initialize(cardBehaviour);
-            
-            cardViewController.FlipCard(CardFace.Back);
 
             _cardViewControllers[index] = cardViewController;
             

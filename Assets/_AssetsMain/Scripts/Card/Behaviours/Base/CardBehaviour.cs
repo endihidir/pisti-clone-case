@@ -5,7 +5,7 @@ public abstract class CardBehaviour : ICardBehaviour
     public int CardNumber { get; private set; }
     public bool IsPistiCard { get; set; }
     public CardType CardType { get; private set; }
-    public ICardInputDetector CardInputDetector { get; set; }
+    public ICardInputDetectionService CardInputDetectionService { get; set; }
     public ICardAnimationService CardAnimationService { get; set; }
 
     public void Initialize(int cardIndex, int cardNumber, CardType cardType)

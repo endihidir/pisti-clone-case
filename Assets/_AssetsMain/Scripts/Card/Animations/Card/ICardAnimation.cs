@@ -4,5 +4,7 @@ public interface ICardAnimation
 {
     public Transform CardMoveTransform { get; }
     public Transform CardFlipTransform { get; }
-    public void FlipCard(CardFace cardFace);
+    public CardView SelectedCardView { get; }
+    public Sprite CardFrontFace { get; }
+    public Sprite CardBackFace { get; }
 }
