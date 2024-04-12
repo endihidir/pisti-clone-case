@@ -68,8 +68,8 @@ public class OpponentMoveState : IState
             var collectedCards = _opponentBoard.CollectedCards;
             collectedCards.CollectCard(cardBehaviour);
             cardAnimationService.Flip(CardFace.Back, CardConstants.DISTRIBUTION_SPEED, Ease.InOutQuad, index * CardConstants.DISTRIBUTION_DELAY);
-            cardAnimationService.Rotate(collectedCards.CollectedCardPoint.rotation, CardConstants.DISTRIBUTION_SPEED, Ease.InOutQuad, index * CardConstants.DISTRIBUTION_DELAY);
-            var task = cardAnimationService.Move(collectedCards.CollectedCardPoint.position, CardConstants.DISTRIBUTION_SPEED, Ease.InOutQuad, index * CardConstants.DISTRIBUTION_DELAY);
+            cardAnimationService.Rotate(collectedCards.CardCollectingArea.rotation, CardConstants.DISTRIBUTION_SPEED, Ease.InOutQuad, index * CardConstants.DISTRIBUTION_DELAY);
+            var task = cardAnimationService.Move(collectedCards.CardCollectingArea.position, CardConstants.DISTRIBUTION_SPEED, Ease.InOutQuad, index * CardConstants.DISTRIBUTION_DELAY);
             tasks.Add(task);
             index++;
         }

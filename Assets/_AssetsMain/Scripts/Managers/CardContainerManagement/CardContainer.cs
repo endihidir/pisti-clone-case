@@ -36,7 +36,6 @@ public class CardContainer : ICardContainer, IGameplayConstructorService
         ShuffleCardIndexData();
     }
 
-    public void Start() { }
     public void Dispose() { }
 
     private void CashCardData()

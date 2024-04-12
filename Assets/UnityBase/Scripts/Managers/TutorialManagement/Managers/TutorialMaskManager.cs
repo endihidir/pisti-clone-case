@@ -42,7 +42,6 @@ namespace UnityBase.Manager
         ~TutorialMaskManager() => Dispose();
         
         public void Initialize() { }
-        public void Start() => SetFadePanelsOpacity();
         public void Dispose() => DisposeToken();
 
         // Note : If masks spawn on the same position, they don't appear !!!

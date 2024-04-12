@@ -1,6 +1,6 @@
 
 
-public class PlayerBoardView : BoardView
+public class PlayerBoardView : UserBoardView
 {
     
 }

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class OpponentBoardView : BoardView
+public class OpponentBoardView : UserBoardView
 {
     [SerializeField] private int _id;
 

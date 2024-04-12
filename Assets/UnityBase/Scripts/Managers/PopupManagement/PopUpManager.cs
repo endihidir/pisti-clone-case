@@ -20,7 +20,6 @@ namespace UnityBase.Manager
         }
 
         public void Initialize() { }
-        public void Start() { }
         public void Dispose() { }
         
         public T GetPopUp<T>(bool show = true, float duration = 0.2f, float delay = 0f) where T : PopUp

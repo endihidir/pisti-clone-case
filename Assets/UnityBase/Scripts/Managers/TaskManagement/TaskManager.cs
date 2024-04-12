@@ -16,7 +16,6 @@ namespace UnityBase.Manager
         }
         
         public void Initialize() { }
-        public void Start() { }
 
         public void Dispose() { }
 

@@ -86,8 +86,6 @@ namespace UnityBase.Manager
             OnSelectLevel += SelectLevel;
         }
 
-        public void Start() { }
-        
         public void Dispose()
         {
             _gameStateBinding.Remove(OnStartGameStateTransition);

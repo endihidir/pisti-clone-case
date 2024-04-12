@@ -22,11 +22,11 @@ public class CardViewController : MonoBehaviour, IPoolable, ICardAnimation, ICar
     public bool IsActive => isActiveAndEnabled;
     public bool IsUnique => false;
 
-    public Sprite CardFrontFace => _frontFaceSprite;
-    public Sprite CardBackFace => _cardAtlas.GetSprite(CardType.Card_Back_Face);
     public Transform CardMoveTransform => transform;
     public Transform CardFlipTransform => _cardFlipTrinsform;
     public CardView SelectedCardView => _selectedCardView;
+    public Sprite CardFrontFace => _frontFaceSprite;
+    public Sprite CardBackFace => _cardAtlas.GetSprite(CardType.Card_Back_Face);
 
     private void Awake()
     {
@@ -37,7 +37,7 @@ public class CardViewController : MonoBehaviour, IPoolable, ICardAnimation, ICar
     {
         DisableAllViews();
         
-        _selectedCardView = cardBehaviour.CardNumber > 0 ? GetCardView<NumberedCardView>().SetNumber(cardBehaviour.CardNumber) : GetCardView<SpecialCardView>();
+        _selectedCardView = cardBehaviour is NumberedCard ? GetCardView<NumberedCardView>().SetNumber(cardBehaviour.CardNumber) : GetCardView<SpecialCardView>();
         _frontFaceSprite = _cardAtlas.GetSprite(cardBehaviour.CardType);
         
         _cardAnimationService = new CardAnimationProvider(this);

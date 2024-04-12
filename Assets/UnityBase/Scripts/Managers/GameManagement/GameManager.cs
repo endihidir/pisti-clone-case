@@ -36,17 +36,10 @@ namespace UnityBase.Manager
             PlayGame();
             
             _fixedDeltaTime = Time.fixedDeltaTime;
-        }
-
-        public void Start()
-        {
-            _gameStateBinding.Add(OnStartGameStateTransition);
-            
-            EventBus<GameStateData>.AddListener(_gameStateBinding, GameStateData.GetChannel(TransitionState.Start));
             
             LoadGame();
         }
-        
+
         public void Dispose()
         {
             _gameStateBinding.Remove(OnStartGameStateTransition);

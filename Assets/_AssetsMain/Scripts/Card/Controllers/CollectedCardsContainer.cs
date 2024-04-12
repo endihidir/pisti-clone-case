@@ -2,12 +2,13 @@ using UnityEngine;
 
 public class CollectedCardsContainer : ICollectedCards
 {
-    private readonly Transform _collectedCards;
-    public Transform CollectedCardPoint => _collectedCards;
+    private readonly Transform _cardCollectingArea;
+    public Transform CardCollectingArea => _cardCollectingArea;
 
     private int _collectedPoints; 
+    public int CollectedCardPoints => _collectedPoints;
     
-    public CollectedCardsContainer(Transform collectedCards) => _collectedCards = collectedCards;
+    public CollectedCardsContainer(Transform cardCollectingArea) => _cardCollectingArea = cardCollectingArea;
 
     public void CollectCard(ICardBehaviour cardBehaviour)
     {
@@ -15,4 +16,5 @@ public class CollectedCardsContainer : ICollectedCards
         
         _collectedPoints += cardBehaviour.GetCardPoint() + pistiPoint;
     }
+
 }

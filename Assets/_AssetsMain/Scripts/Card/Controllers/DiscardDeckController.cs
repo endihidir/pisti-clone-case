@@ -11,7 +11,7 @@ public class DiscardDeckController : IDiscardDeck
     
     public DiscardDeckController(GameplayDataHolderSO gameplayDataHolderSo)
     {
-        _slots = gameplayDataHolderSo.gameplayStateMachineSo.GetDeckView<DiscardView>().Slots;
+        _slots = gameplayDataHolderSo.gameplayStateMachineSo.GetDeckView<DiscardBoardView>().Slots;
         
         _droppedCards = new Stack<ICardBehaviour>();
     }

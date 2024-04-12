@@ -32,8 +32,7 @@ namespace UnityBase.Manager
 
         ~PoolManager() => Dispose();
         public void Initialize() => CashPoolables();
-        public void Start() => CreateAllCashedPoolables();
-        
+
         public void Dispose()
         {
             if(_isDisposed) return;

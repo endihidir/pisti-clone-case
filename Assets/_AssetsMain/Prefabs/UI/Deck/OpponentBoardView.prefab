@@ -55,7 +55,7 @@ MonoBehaviour:
   - {fileID: 7954507353137931733}
   - {fileID: 340588725996678579}
   - {fileID: 2911940911539967495}
-  _collectedCards: {fileID: 8277791911126165703}
+  _cardCollectingArea: {fileID: 8277791911126165703}
   _slotOffset: 100
   _id: 1
 --- !u!1 &1286672405197178376
@@ -68,7 +68,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8277791911126165703}
   m_Layer: 5
-  m_Name: CollectedCards
+  m_Name: CardCollectingArea
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

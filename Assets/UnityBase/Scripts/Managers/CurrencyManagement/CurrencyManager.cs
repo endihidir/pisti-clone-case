@@ -34,7 +34,6 @@ namespace UnityBase.Manager
         ~CurrencyManager() { }
 
         public void Initialize() { }
-        public void Start() { }
         public void Dispose() { }
         public void SetCoinViewData(ICoinView coinView)
         {

@@ -8,7 +8,7 @@ using VContainer.Unity;
 
 namespace UnityBase.Presenter
 {
-    public class GameplayManagerPresenter : IInitializable, IStartable, IDisposable
+    public class GameplayManagerPresenter : IInitializable, IDisposable
     {
         [Inject]
         private readonly IEnumerable<IGameplayConstructorService> _gameplayPresenterDataServices;
@@ -20,7 +20,6 @@ namespace UnityBase.Presenter
         }
         
         public void Initialize() => _gameplayPresenterDataServices.ForEach(x => x.Initialize());
-        public void Start() => _gameplayPresenterDataServices.ForEach(x => x.Start());
         public void Dispose() => _gameplayPresenterDataServices.ForEach(x => x.Dispose());
     }
 }

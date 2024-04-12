@@ -71,11 +71,6 @@ namespace UnityBase.Manager
             _tutorialStepManagerSo.currentTutorialStep = _currentTutorialStep;
         }
 
-        public void Start()
-        {
-            OnCompleteTutorialStep += PasstoNextTutorialStep;
-        }
-
         public void Dispose()
         {
             OnCompleteTutorialStep -= PasstoNextTutorialStep;

@@ -19,7 +19,7 @@ namespace UnityBase.Manager
         ~CommandManager() => Dispose();
 
         public void Initialize() { }
-        public void Start() { }
+
         public void Dispose()
         {
             _commandRecorders.ForEach(x => x.Value.Dispose());

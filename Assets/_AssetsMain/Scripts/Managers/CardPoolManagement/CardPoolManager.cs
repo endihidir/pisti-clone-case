@@ -16,7 +16,6 @@ public class CardPoolManager : ICardPoolService, IGameplayConstructorService
         _poolDataService = poolDataService;
     }
     public void Initialize() { }
-    public void Start() { }
     public void Dispose() { }
 
     public T GetCardView<T>(bool show = true, float duration = 0.2f, float delay = 0) where T : CardViewController

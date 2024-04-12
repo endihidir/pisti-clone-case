@@ -25,7 +25,6 @@ namespace UnityBase.Manager
         }
 
         public void Initialize() { }
-        public void Start() { }
         public void Dispose() { }
 
         public T GetTutorial<T>(PositionSpace spawnSpace, bool show = true, float duration = 0f, float delay = 0f, Action onComplete = default) where T : Tutorial

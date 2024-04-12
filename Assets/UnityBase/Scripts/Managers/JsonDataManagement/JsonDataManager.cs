@@ -25,8 +25,7 @@ namespace UnityBase.Manager
 #endif
         
         public void Initialize() { }
-        public void Start() { }
-        
+
         public bool Save<T>(string key, T data)
         {
             EnsureDirectoryExists();

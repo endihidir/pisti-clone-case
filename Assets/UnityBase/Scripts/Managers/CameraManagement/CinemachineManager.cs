@@ -52,13 +52,6 @@ namespace UnityBase.Manager
             
         }
 
-        public void Start()
-        {
-            OnChangeCamera += ChangeCamera;
-            
-            _cameraSwipeController.Start();
-        }
-
         public void Dispose()
         {
             OnChangeCamera -= ChangeCamera;

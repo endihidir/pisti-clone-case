@@ -2,6 +2,7 @@ using UnityEngine;
 
 public interface ICollectedCards
 {
-    public Transform CollectedCardPoint { get; }
+    public Transform CardCollectingArea { get; }
+    public int CollectedCardPoints { get; }
     public void CollectCard(ICardBehaviour cardBehaviour);
 }

@@ -17,10 +17,6 @@ namespace UnityBase.Manager
         {
         }
 
-        public void Start()
-        {
-        }
-
         public void Dispose()
         {
         }

@@ -33,11 +33,6 @@ namespace UnityBase.Manager
 
         public void Initialize()
         {
-            
-        }
-
-        public void Start()
-        {
             InitializeGameState();
         }
 

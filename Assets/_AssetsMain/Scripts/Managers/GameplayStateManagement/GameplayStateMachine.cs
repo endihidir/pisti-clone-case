@@ -35,7 +35,7 @@ public class GameplayStateMachine : IStateMachine, ITickable, IGameplayConstruct
         _opponentCount = _gameplayStateMachineSo.GetOpponentCount();
 
         var playerBoard = _gameplayStateMachineSo.GetDeckView<PlayerBoardView>();
-        _playerBoard = new UserBoardController(0, new UserDeckController(playerBoard.Slots), new CollectedCardsContainer(playerBoard.CollectedCards));
+        _playerBoard = new UserBoardController(0, new UserDeckController(playerBoard.Slots), new CollectedCardsContainer(playerBoard.CardCollectingArea));
         _playerMoveState = new PlayerMoveState(_playerBoard, discardDeck);
 
         _opponentDecks = new IUserBoard[_opponentCount];
@@ -45,7 +45,7 @@ public class GameplayStateMachine : IStateMachine, ITickable, IGameplayConstruct
         {
             var userID = i + 1;
             var opponentBoard = _gameplayStateMachineSo.GetOpponentDeckViewBy(userID);
-            _opponentDecks[i] = new UserBoardController(userID, new UserDeckController(opponentBoard.Slots), new CollectedCardsContainer(opponentBoard.CollectedCards));
+            _opponentDecks[i] = new UserBoardController(userID, new UserDeckController(opponentBoard.Slots), new CollectedCardsContainer(opponentBoard.CardCollectingArea));
             _opponentMoveStates[i] = new OpponentMoveState(_opponentDecks[i], discardDeck);
         }
 
@@ -83,7 +83,6 @@ public class GameplayStateMachine : IStateMachine, ITickable, IGameplayConstruct
         }
     }
 
-    public void Start() { }
     private void OnPlayerMoveStateComplete() => ChangeState(_opponentMoveStates[0]);
 
     private void OnOpponentMoveStateComplete()
