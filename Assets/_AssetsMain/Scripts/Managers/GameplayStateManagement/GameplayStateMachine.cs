@@ -108,20 +108,11 @@ public class GameplayStateMachine : IStateMachine, ITickable, IGameplayConstruct
         }
     }
     
-    private void OnDistributionStateComplete()
-    {
-        var isCardsFinished = ((CardDistributionState)_cardDistributionState).IsAllCardsFinished;
-
-        if (isCardsFinished)
-            ChangeState(_resultCalculationState);
-        else
-            ChangeState(_playerMoveState);
-    }
+    private void OnDistributionStateComplete() => ChangeState(IsLastOpponentCardsFinished ? _resultCalculationState : _playerMoveState);
 
     private void OnResultCalculated()
     {
         var isPlayerWin = ((ResultCalculationState)_resultCalculationState).IsPlayerWin;
-        
         _gameplayDataService.ChangeGameState(isPlayerWin ? GameState.GameSuccessState : GameState.GameFailState, 1f);
     }
 
@@ -129,6 +120,12 @@ public class GameplayStateMachine : IStateMachine, ITickable, IGameplayConstruct
 
     public void ChangeState(IState state)
     {
+        if (_currentGameplayState == state)
+        {
+            Debug.LogError("You can not set same state!");
+            return;
+        }
+        
         _currentGameplayState?.OnExit();
         _currentGameplayState = state;
         _currentGameplayState.OnEnter();

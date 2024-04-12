@@ -8,8 +8,6 @@ public class CardDistributionState : IState
     public event Action OnStateComplete;
 
     private bool _isFirstRound = true;
-    public bool IsAllCardsFinished => _opponentDecks[^1].UserDeck.CardBehaviours.Count < 1;
-
     private readonly ICardContainer _cardContainer;
     private readonly IUserBoard _playerBoard;
     private readonly IUserBoard[] _opponentDecks;
