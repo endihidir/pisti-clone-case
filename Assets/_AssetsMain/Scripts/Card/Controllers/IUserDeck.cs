@@ -9,4 +9,5 @@ public interface IUserDeck
     public void DropCard(ICardBehaviour cardBehaviour);
     public bool TryGetRandomCard(out ICardBehaviour cardBehaviour);
     public bool ContainsCard(ICardBehaviour cardBehaviour);
+    public void Reset();
 }

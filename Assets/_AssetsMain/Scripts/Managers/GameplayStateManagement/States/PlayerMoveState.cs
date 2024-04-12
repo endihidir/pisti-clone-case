@@ -9,14 +9,14 @@ public class PlayerMoveState : IState
 {
     public event Action OnStateComplete;
     private readonly IUserBoard _playerBoard;
-    private readonly IDiscardDeck _discardDeck;
+    private readonly IDiscardBoard _discardBoard;
     private readonly Camera _cam;
 
     private bool _isCardSelected;
-    public PlayerMoveState(IUserBoard playerBoard, IDiscardDeck discardDeck)
+    public PlayerMoveState(IUserBoard playerBoard, IDiscardBoard discardBoard)
     {
         _playerBoard = playerBoard;
-        _discardDeck = discardDeck;
+        _discardBoard = discardBoard;
         _cam = Camera.main;
     }
     
@@ -39,9 +39,10 @@ public class PlayerMoveState : IState
                 if (inputDetector.IsInRange(Input.mousePosition))
                 {
                     _isCardSelected = true;
+                    var distributionSpeed = CardConstants.DISTRIBUTION_SPEED;
                     var cardAnimationService = cardBehaviour.CardAnimationService;
-                    cardAnimationService.Rotate(_discardDeck.Slots[0].rotation, 0.5f, Ease.InOutQuad);
-                    await cardAnimationService.Move(_discardDeck.Slots[0].position, 0.5f, Ease.InOutQuad);
+                    cardAnimationService.Rotate(_discardBoard.Slots[0].rotation, distributionSpeed, Ease.InOutQuad);
+                    await cardAnimationService.Move(_discardBoard.Slots[0].position, distributionSpeed, Ease.InOutQuad);
                     OnDropComplete(cardBehaviour);
                     break;
                 }
@@ -51,7 +52,7 @@ public class PlayerMoveState : IState
 
     private void OnDropComplete(ICardBehaviour cardBehaviour)
     {
-        var collectingType = _discardDeck.GetCard(cardBehaviour);
+        var collectingType = _discardBoard.GetCard(cardBehaviour);
         
         _playerBoard.UserDeck.DropCard(cardBehaviour);
         
@@ -69,8 +70,11 @@ public class PlayerMoveState : IState
 
     private async void CollectAllCards()
     {
-        var droppedCards = _discardDeck.DroppedCards;
+        var distributionSpeed = CardConstants.DISTRIBUTION_SPEED;
+        var distributionDelay = CardConstants.DISTRIBUTION_DELAY;
         
+        var droppedCards = _discardBoard.DroppedCards;
+
         var tasks = new List<UniTask>();
         var index = 0;
         foreach (var cardBehaviour in droppedCards)
@@ -78,26 +82,20 @@ public class PlayerMoveState : IState
             var cardAnimationService = cardBehaviour.CardAnimationService;
             var collectedCards = _playerBoard.CollectedCards;
             collectedCards.CollectCard(cardBehaviour);
-            cardAnimationService.Flip(CardFace.Back, CardConstants.DISTRIBUTION_SPEED, Ease.InOutQuad, index * CardConstants.DISTRIBUTION_DELAY);
-            cardAnimationService.Rotate(collectedCards.CardCollectingArea.rotation, CardConstants.DISTRIBUTION_SPEED, Ease.InOutQuad, index * CardConstants.DISTRIBUTION_DELAY);
-            var task = cardAnimationService.Move(collectedCards.CardCollectingArea.position, CardConstants.DISTRIBUTION_SPEED, Ease.InOutQuad, index * CardConstants.DISTRIBUTION_DELAY);
+            cardAnimationService.Flip(CardFace.Back, distributionSpeed, Ease.InOutQuad, index * distributionDelay);
+            cardAnimationService.Rotate(collectedCards.CardCollectingArea.rotation, distributionSpeed, Ease.InOutQuad, index *distributionDelay);
+            var task = cardAnimationService.Move(collectedCards.CardCollectingArea.position, distributionSpeed, Ease.InOutQuad, index * distributionDelay);
             tasks.Add(task);
             index++;
         }
         
         await UniTask.WhenAll(tasks);
         
-        _discardDeck.ClearDeck();
+        _discardBoard.ClearDeck();
         
         OnStateComplete?.Invoke();
     }
 
-    public void OnExit()
-    {
-        Debug.Log(_playerBoard.CollectedCards.CollectedCardPoints);
-        
-        _isCardSelected = false;
-    }
-
+    public void OnExit() => _isCardSelected = false;
     public void Reset() { }
 }

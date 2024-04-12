@@ -5,16 +5,16 @@ using UnityBase.Service;
 
 public class CardContainer : ICardContainer, IGameplayConstructorService
 {
-    private const int CARD_COUNT = 52;
-    
+    public const int TOTAL_DECK_CARD_COUNT = 52;
     private readonly int _totalDeckCount;
     private readonly CardContainerSO _cardContainerSo;
     private readonly CardBehaviourFactory _cardBehaviourFactory;
     private readonly IDictionary<int, ICardBehaviour> _cardBehaviours;
-    private readonly IDictionary<int, CardViewController> _cardViewControllers;
     private readonly ICardPoolService _cardPoolService;
     private readonly CardDefinitionSO[] _cardDefinitions;
     private Stack<int> _cardIndexes;
+    
+    public int TotalDeckCount => _totalDeckCount;
 
     public CardContainer(GameplayDataHolderSO gameplayDataHolderSo, CardBehaviourFactory cardBehaviourFactory, ICardPoolService cardPoolService)
     {
@@ -24,8 +24,7 @@ public class CardContainer : ICardContainer, IGameplayConstructorService
         
         _cardDefinitions = _cardContainerSo.cardDefinitions;
         _totalDeckCount = _cardContainerSo.totalDeckCount;
-
-        _cardViewControllers = new Dictionary<int, CardViewController>();
+        
         _cardBehaviours = new Dictionary<int, ICardBehaviour>();
         _cardIndexes = new Stack<int>();
     }
@@ -65,7 +64,7 @@ public class CardContainer : ICardContainer, IGameplayConstructorService
     {
         _cardIndexes.Clear();
         
-        for (int i = 0; i < _totalDeckCount * CARD_COUNT; i++) 
+        for (int i = 0; i < _totalDeckCount * TOTAL_DECK_CARD_COUNT; i++) 
             _cardIndexes.Push(i);
 
         _cardIndexes = _cardIndexes.Shuffle();
@@ -85,8 +84,6 @@ public class CardContainer : ICardContainer, IGameplayConstructorService
         {
             cardViewController.Initialize(cardBehaviour);
 
-            _cardViewControllers[index] = cardViewController;
-            
             return true;
         }
 

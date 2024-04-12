@@ -131,7 +131,7 @@ namespace UnityBase.Manager
         {
             if (gameStateData.EndState == GameState.GameSuccessState)
             {
-                UpdateLevel();
+                //UpdateLevel();
             }
         }
 

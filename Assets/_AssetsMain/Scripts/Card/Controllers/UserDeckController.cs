@@ -36,4 +36,8 @@ public class UserDeckController : IUserDeck
     }
 
     public bool ContainsCard(ICardBehaviour cardBehaviour) => _cardBehaviours.Contains(cardBehaviour);
+    public void Reset()
+    {
+        
+    }
 }

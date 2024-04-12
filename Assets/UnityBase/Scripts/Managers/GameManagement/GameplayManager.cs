@@ -22,7 +22,7 @@ namespace UnityBase.Manager
 
         private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
-        public GameplayManager(IGameDataService gameDataService, ITutorialStepDataService tutorialStepDataService, ISceneGroupLoadService sceneGroupLoadService)
+        public GameplayManager(IGameDataService gameDataService, ITutorialStepDataService tutorialStepDataService)
         {
             _gameDataService = gameDataService;
             

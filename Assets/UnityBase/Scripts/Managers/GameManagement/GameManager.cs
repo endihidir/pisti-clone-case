@@ -33,9 +33,9 @@ namespace UnityBase.Manager
 
         public void Initialize()
         {
-            PlayGame();
-            
             _fixedDeltaTime = Time.fixedDeltaTime;
+            
+            PlayGame();
             
             LoadGame();
         }

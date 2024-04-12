@@ -39,7 +39,7 @@ namespace UnityBase.BaseLifetimeScope
             builder.Register<GameplayStateMachine>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<CardContainer>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<CardPoolManager>(Lifetime.Singleton).AsImplementedInterfaces();
-            builder.Register<DiscardDeckController>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<DiscardBoardController>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<CardBehaviourFactory>(Lifetime.Singleton);
         }
         

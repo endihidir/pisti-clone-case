@@ -1,4 +1,3 @@
-using System;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
@@ -11,7 +10,7 @@ public class CardAnimationProvider : ICardAnimationService
     private readonly Sprite _cardBackFace, _cardFrontFace;
     private CardFace _currentCardFace;
     
-    private Tween _cardMoveTween, _cardFlipTween, _cardRotateTween, _siblingChangeDelayTween;
+    private Tween _cardMoveTween, _cardFlipTween, _cardRotateTween;
 
     public CardAnimationProvider(ICardAnimation cardAnimation)
     {
@@ -23,47 +22,46 @@ public class CardAnimationProvider : ICardAnimationService
         _cardBackFace = _cardAnimation.CardBackFace;
     }
 
-    public async UniTask Move(Vector3 pos, float duration, Ease ease, float delay = 0, Action onComplete = default)
+    public async UniTask Move(Vector3 pos, float duration, Ease ease, float delay = 0)
     {
         _cardMoveTween?.Kill();
-        _siblingChangeDelayTween?.Kill();
+
+        var isSetToLastSibling = false;
         
-        _siblingChangeDelayTween = DOVirtual.DelayedCall(duration * 0.5f, () => _moveTransform.SetAsLastSibling());
+        var startDist = Vector3.Distance(_moveTransform.position, pos);
         
         _cardMoveTween = _moveTransform.DOMove(pos, duration)
+                                       .OnUpdate(() => ChnageSiblingOrder(pos, startDist, ref isSetToLastSibling))
                                        .SetEase(ease)
-                                       .SetDelay(delay)
-                                       .OnComplete(() => onComplete?.Invoke());
+                                       .SetDelay(delay);
 
         
         await _cardMoveTween.AsyncWaitForCompletion().AsUniTask();
     }
 
-    public async UniTask Rotate(Quaternion rot, float duration, Ease ease, float delay = 0, Action onComplete = default)
+    public async UniTask Rotate(Quaternion rot, float duration, Ease ease, float delay = 0)
     {
         _cardRotateTween?.Kill();
         
         _cardRotateTween = _moveTransform.DORotateQuaternion(rot, duration)
                                        .SetEase(ease)
-                                       .SetDelay(delay)
-                                       .OnComplete(() => onComplete?.Invoke());
+                                       .SetDelay(delay);
         
         await _cardRotateTween.AsyncWaitForCompletion().AsUniTask();
     }
 
-    public async UniTask Flip(CardFace cardFace, float duration, Ease ease, float delay = 0f, Action onComplete = default)
+    public async UniTask Flip(CardFace cardFace, float duration, Ease ease, float delay = 0f)
     {
         if(_currentCardFace == cardFace) return;
 
         _cardFlipTween?.Kill();
 
         _cardFlipTween = DOTween.Sequence()
-                            .AppendInterval(delay)
-                            .Append(_flipTransform.DOLocalRotate(Vector3.up * 90f, duration * 0.5f).SetEase(ease))
-                            .AppendCallback(()=> Flip(cardFace))
-                            .Append(_flipTransform.DOLocalRotate(Vector3.up * 0f, duration * 0.5f).SetEase(ease))
-                            .AppendCallback(()=> onComplete?.Invoke());
-        
+                                .AppendInterval(delay)
+                                .Append(_flipTransform.DOLocalRotate(Vector3.up * 90f, duration * 0.5f).SetEase(ease))
+                                .AppendCallback(() => Flip(cardFace))
+                                .Append(_flipTransform.DOLocalRotate(Vector3.up * 0f, duration * 0.5f).SetEase(ease));
+
         await _cardFlipTween.AsyncWaitForCompletion().AsUniTask();
     }
 
@@ -80,12 +78,19 @@ public class CardAnimationProvider : ICardAnimationService
             numberedCardView.EnableText(cardFace == CardFace.Front);
         }
     }
+    
+    private void ChnageSiblingOrder(Vector3 pos, float startDist, ref bool isSetToLastSibling)
+    {
+        var currentDistance = Vector3.Distance(_moveTransform.position, pos);
+        if (!(currentDistance < startDist * 0.5f) || isSetToLastSibling) return;
+        isSetToLastSibling = true;
+        _moveTransform.SetAsLastSibling();
+    }
 
     public void Dispose()
     {
         _cardRotateTween?.Kill();
         _cardMoveTween?.Kill();
         _cardFlipTween?.Kill();
-        _siblingChangeDelayTween?.Kill();
     }
 }

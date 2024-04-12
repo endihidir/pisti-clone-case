@@ -9,27 +9,28 @@ public class OpponentMoveState : IState
     public event Action OnStateComplete;
 
     private readonly IUserBoard _opponentBoard;
-    private readonly IDiscardDeck _discardDeck;
+    private readonly IDiscardBoard _discardBoard;
     public int UserID => _opponentBoard.UserID;
     public int CardCount => _opponentBoard.UserDeck.CardBehaviours.Count;
     public bool IsCardsFinished => CardCount < 1;
 
-    public OpponentMoveState(IUserBoard opponentBoard, IDiscardDeck discardDeck)
+    public OpponentMoveState(IUserBoard opponentBoard, IDiscardBoard discardBoard)
     {
         _opponentBoard = opponentBoard;
-        _discardDeck = discardDeck;
+        _discardBoard = discardBoard;
     }
     
     public async void OnEnter()
     {
+        var distributionSpeed = CardConstants.DISTRIBUTION_SPEED;
         var opponentDeck = _opponentBoard.UserDeck;
         
         if (opponentDeck.TryGetRandomCard(out var cardBehaviour))
         {
             var cardAnimationService = cardBehaviour.CardAnimationService;
-            cardAnimationService.Flip(CardFace.Front, CardConstants.DISTRIBUTION_SPEED, Ease.InOutQuad, CardConstants.DISTRIBUTION_DELAY);
-            cardAnimationService.Rotate(_discardDeck.Slots[0].rotation, CardConstants.DISTRIBUTION_SPEED, Ease.InOutQuad, CardConstants.DISTRIBUTION_DELAY);
-            await cardAnimationService.Move(_discardDeck.Slots[0].position, CardConstants.DISTRIBUTION_SPEED, Ease.InOutQuad, CardConstants.DISTRIBUTION_DELAY);
+            cardAnimationService.Flip(CardFace.Front, distributionSpeed, Ease.InOutQuad);
+            cardAnimationService.Rotate(_discardBoard.Slots[0].rotation, distributionSpeed, Ease.InOutQuad);
+            await cardAnimationService.Move(_discardBoard.Slots[0].position, distributionSpeed, Ease.InOutQuad);
             OnDropComplete(cardBehaviour);
         }
         else
@@ -40,7 +41,7 @@ public class OpponentMoveState : IState
     
     private void OnDropComplete(ICardBehaviour cardBehaviour)
     {
-        var collectingType = _discardDeck.GetCard(cardBehaviour);
+        var collectingType = _discardBoard.GetCard(cardBehaviour);
         
         _opponentBoard.UserDeck.DropCard(cardBehaviour);
 
@@ -58,7 +59,9 @@ public class OpponentMoveState : IState
 
     private async void CollectAllCards()
     {
-        var droppedCards = _discardDeck.DroppedCards;
+        var distributionSpeed = CardConstants.DISTRIBUTION_SPEED;
+        var distributionDelay = CardConstants.DISTRIBUTION_DELAY;
+        var droppedCards = _discardBoard.DroppedCards;
         
         var tasks = new List<UniTask>();
         var index = 0;
@@ -67,16 +70,16 @@ public class OpponentMoveState : IState
             var cardAnimationService = cardBehaviour.CardAnimationService;
             var collectedCards = _opponentBoard.CollectedCards;
             collectedCards.CollectCard(cardBehaviour);
-            cardAnimationService.Flip(CardFace.Back, CardConstants.DISTRIBUTION_SPEED, Ease.InOutQuad, index * CardConstants.DISTRIBUTION_DELAY);
-            cardAnimationService.Rotate(collectedCards.CardCollectingArea.rotation, CardConstants.DISTRIBUTION_SPEED, Ease.InOutQuad, index * CardConstants.DISTRIBUTION_DELAY);
-            var task = cardAnimationService.Move(collectedCards.CardCollectingArea.position, CardConstants.DISTRIBUTION_SPEED, Ease.InOutQuad, index * CardConstants.DISTRIBUTION_DELAY);
+            cardAnimationService.Flip(CardFace.Back, distributionSpeed, Ease.InOutQuad, index * distributionDelay);
+            cardAnimationService.Rotate(collectedCards.CardCollectingArea.rotation, distributionSpeed, Ease.InOutQuad, index * distributionDelay);
+            var task = cardAnimationService.Move(collectedCards.CardCollectingArea.position, distributionSpeed, Ease.InOutQuad, index * distributionDelay);
             tasks.Add(task);
             index++;
         }
         
         await UniTask.WhenAll(tasks);
         
-        _discardDeck.ClearDeck();
+        _discardBoard.ClearDeck();
         
         OnStateComplete?.Invoke();
     }

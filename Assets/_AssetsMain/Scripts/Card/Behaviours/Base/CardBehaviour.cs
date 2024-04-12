@@ -5,6 +5,7 @@ public abstract class CardBehaviour : ICardBehaviour
     public int CardNumber { get; private set; }
     public bool IsPistiCard { get; set; }
     public CardType CardType { get; private set; }
+    public int OwnerUserID { get; set; }
     public ICardInputDetectionService CardInputDetectionService { get; set; }
     public ICardAnimationService CardAnimationService { get; set; }
 

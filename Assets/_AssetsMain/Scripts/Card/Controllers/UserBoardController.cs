@@ -1,6 +1,6 @@
 ﻿public class UserBoardController : IUserBoard
 {
-    private readonly int _userID;
+    private int _userID;
     private readonly IUserDeck _userDeck;
     private readonly ICollectedCards _collectedCards;
     public int UserID => _userID;
@@ -12,5 +12,12 @@
         _userID = userID;
         _userDeck = userDeck;
         _collectedCards = collectedCards;
+    }
+    
+    public void Reset()
+    {
+        _userID = 0;
+        _userDeck.Reset();
+        _collectedCards.Reset();
     }
 }
