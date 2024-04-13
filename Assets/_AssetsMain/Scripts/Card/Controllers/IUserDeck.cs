@@ -8,6 +8,6 @@ public interface IUserDeck
     public void AddCard(ICardBehaviour cardBehaviour);
     public void DropCard(ICardBehaviour cardBehaviour);
     public bool TryGetRandomCard(out ICardBehaviour cardBehaviour);
-    public bool ContainsCard(ICardBehaviour cardBehaviour);
+    public bool TryGetMatchedCardWith(ICardBehaviour topOfTheCarOnPile, out ICardBehaviour selectedCardBehaviour);
     public void Reset();
 }

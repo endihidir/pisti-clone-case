@@ -26,9 +26,22 @@ public class UserDeckController : IUserDeck
         return cardBehaviour != null;
     }
 
-    public bool ContainsCard(ICardBehaviour cardBehaviour) => _cardBehaviours.Contains(cardBehaviour);
-    public void Reset()
+    public bool TryGetMatchedCardWith(ICardBehaviour topOfTheCarOnPile, out ICardBehaviour selectedCardBehaviour)
     {
-        _cardBehaviours.Clear();
+        foreach (var userCard in _cardBehaviours)
+        {
+            switch (userCard)
+            {
+                case NumberedCard when topOfTheCarOnPile is NumberedCard && userCard.CardNumber == topOfTheCarOnPile.CardNumber:
+                case SpecialCard when topOfTheCarOnPile is SpecialCard && userCard.GetType() == topOfTheCarOnPile.GetType():
+                    selectedCardBehaviour = userCard;
+                    return true;
+            }
+        }
+        
+        selectedCardBehaviour = null;
+        return false;
     }
+
+    public void Reset() => _cardBehaviours.Clear();
 }

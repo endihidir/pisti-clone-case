@@ -5,12 +5,11 @@ using UnityBase.StateMachineCore;
 public class DealRemainingCardsState : IState
 {
     public event Action OnStateComplete;
-
     private readonly IUserBoard _playerBoard;
     private readonly IUserBoard[] _opponentsBoard;
     private readonly IDiscardPile _discardPile;
-
     private IState _cardCollectingState;
+    
     public DealRemainingCardsState(IUserBoard playerBoard, IUserBoard[] opponentsBoard, IDiscardPile discardPile)
     {
         _playerBoard = playerBoard;

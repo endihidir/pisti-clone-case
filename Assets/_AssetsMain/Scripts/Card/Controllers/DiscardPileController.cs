@@ -66,6 +66,13 @@ public class DiscardPileController : IDiscardPile
                && cardBehaviour is SpecialCard && 
                lastCardBeforeDrop.GetType() == cardBehaviour.GetType();
     }
+
+    public bool IsCardMatchedWith(ICardBehaviour cardBehaviour)
+    {
+        var lastCard = _dealtCards.Peek();
+        
+        return cardBehaviour.GetType() == lastCard.GetType();
+    }
     
     public void ClearDeck() => _dealtCards.Clear();
 }

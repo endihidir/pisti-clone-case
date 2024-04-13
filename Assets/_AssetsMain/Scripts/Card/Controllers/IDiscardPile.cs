@@ -8,5 +8,6 @@ public interface IDiscardPile
     public int LastCollectedUserID { get; }
     public void PushCard(ICardBehaviour cardBehaviour);
     public CardCollectingType GetCard(ICardBehaviour cardBehaviour);
+    public bool IsCardMatchedWith(ICardBehaviour cardBehaviour);
     public void ClearDeck();
 }

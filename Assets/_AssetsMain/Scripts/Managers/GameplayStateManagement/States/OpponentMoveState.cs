@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityBase.StateMachineCore;
@@ -27,14 +28,27 @@ public class OpponentMoveState : IState
     public async void OnEnter()
     {
         var opponentDeck = _opponentBoard.UserDeck;
-        
-        if (opponentDeck.TryGetRandomCard(out var cardBehaviour))
+
+        ICardBehaviour cardBehaviour = null;
+
+        foreach (var discardPileDealtCard in _discardPile.DealtCards)
         {
-            var cardAnimationService = cardBehaviour.CardAnimationService;
-            cardAnimationService.Flip(CardFace.Front, CardConstants.MOVE_DURATION, Ease.InOutQuad);
-            cardAnimationService.Rotate(_discardPile.Slots[0].rotation, CardConstants.MOVE_DURATION, Ease.InOutQuad);
-            await cardAnimationService.Move(_discardPile.Slots[0].position, CardConstants.MOVE_DURATION, Ease.InOutQuad);
-            OnDropComplete(cardBehaviour);
+            if (opponentDeck.TryGetMatchedCardWith(discardPileDealtCard, out cardBehaviour))
+                break;
+        }
+
+        if (cardBehaviour != null)
+        {
+            await DropSelectedCard(cardBehaviour);
+        }
+        else if (opponentDeck.TryGetRandomCard(out cardBehaviour))
+        {
+            while (ShouldRetrySelection(cardBehaviour, opponentDeck))
+            {
+                opponentDeck.TryGetRandomCard(out cardBehaviour);
+            }
+            
+            await DropSelectedCard(cardBehaviour);
         }
         else
         {
@@ -42,6 +56,25 @@ public class OpponentMoveState : IState
         }
     }
     
+    private bool ShouldRetrySelection(ICardBehaviour card, IUserDeck opponentDeck)
+    {
+        var isJackCard = card is JackCard;
+        var discardPileIsEmpty = _discardPile.DealtCards.Count < 1;
+        var moreThanOneCardInOpponentDeck = opponentDeck.CardBehaviours.Count > 1;
+        var notAllOpponentCardsAreJackCards = !opponentDeck.CardBehaviours.TrueForAll(c => c is JackCard);
+
+        return isJackCard && discardPileIsEmpty && moreThanOneCardInOpponentDeck && notAllOpponentCardsAreJackCards;
+    }
+
+    private async UniTask DropSelectedCard(ICardBehaviour cardBehaviour)
+    {
+        var cardAnimationService = cardBehaviour.CardAnimationService;
+        cardAnimationService.Flip(CardFace.Front, CardConstants.MOVE_DURATION, Ease.InOutQuad);
+        cardAnimationService.Rotate(_discardPile.Slots[0].rotation, CardConstants.MOVE_DURATION, Ease.InOutQuad);
+        await cardAnimationService.Move(_discardPile.Slots[0].position, CardConstants.MOVE_DURATION, Ease.InOutQuad);
+        OnDropComplete(cardBehaviour);
+    }
+
     private async void OnDropComplete(ICardBehaviour cardBehaviour)
     {
         var collectingType = _discardPile.GetCard(cardBehaviour);
