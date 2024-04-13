@@ -18,7 +18,7 @@ public class CardPoolManager : ICardPoolService, IGameplayConstructorService
     public void Initialize() { }
     public void Dispose() { }
 
-    public T GetCardView<T>(bool show = true, float duration = 0.2f, float delay = 0) where T : CardViewController
+    public T GetCardView<T>(bool show = true, float duration = 0f, float delay = 0) where T : CardViewController
     {
         var cardView = _poolDataService.GetObject<T>(show, duration, delay);
         cardView.transform.SetParent(_cardViewParent);
@@ -27,17 +27,17 @@ public class CardPoolManager : ICardPoolService, IGameplayConstructorService
         return cardView;
     }
 
-    public void HideCardView(CardViewController cardViewController, float duration = 0.2f, float delay = 0, Action onComplete = default, bool readLogs = false)
+    public void HideCardView(CardViewController cardViewController, float duration = 0f, float delay = 0f, Action onComplete = default, bool readLogs = false)
     {
         _poolDataService.HideObject(cardViewController, duration, delay, onComplete, readLogs);
     }
 
-    public void HideAllCardViewOfType<T>(float duration = 0.2f, float delay = 0, Action onComplete = default) where T : CardViewController
+    public void HideAllCardViewOfType<T>(float duration = 0f, float delay = 0f, Action onComplete = default) where T : CardViewController
     {
         _poolDataService.HideAllObjectsOfType<T>(duration, delay, onComplete);
     }
 
-    public void HideAllCardView(float duration = 0.2f, float delay = 0)
+    public void HideAllCardView(float duration = 0f, float delay = 0f)
     {
         _poolDataService.HideAllObjectsOfType<CardViewController>(duration, delay);
     }

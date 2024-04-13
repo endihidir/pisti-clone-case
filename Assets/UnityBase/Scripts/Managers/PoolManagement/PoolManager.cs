@@ -62,6 +62,8 @@ namespace UnityBase.Manager
 
         public void HideObject<T>(T poolable, float duration, float delay, Action onComplete = default, bool readLogs = false) where T : IPoolable
         {
+            if(_isDisposed) return;
+            
             var key = poolable.PoolableObject.GetType();
 
             if (!_poolabeGroups.TryGetValue(key, out var poolableObjectGroup))

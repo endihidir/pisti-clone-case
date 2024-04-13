@@ -10,9 +10,6 @@ public class LevelEndMainMenuButton : ButtonBehaviour
 {
     [SerializeField] private float _stateChangeDelay = 0.2f;
 
-    [Inject]
-    private readonly IGameDataService _gameDataService;
-    
     [Inject] 
     private readonly ISceneGroupLoadService _sceneGroupLoadService;
     
@@ -20,8 +17,6 @@ public class LevelEndMainMenuButton : ButtonBehaviour
 
     protected override async void OnClick()
     {
-        _gameDataService.PlayGame();
-
         _cancellationTokenSource = new CancellationTokenSource();
 
         await UniTask.Delay(TimeSpan.FromSeconds(_stateChangeDelay), DelayType.DeltaTime, PlayerLoopTiming.Update, _cancellationTokenSource.Token);

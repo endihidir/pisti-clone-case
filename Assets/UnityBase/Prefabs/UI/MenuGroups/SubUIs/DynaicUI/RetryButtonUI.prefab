@@ -72,6 +72,47 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8114254563774549036}
     m_Modifications:
+    - target: {fileID: 2069502014803124559, guid: f6c81c93750d08142a1192a904c50e6e,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: -20
+      objectReference: {fileID: 0}
+    - target: {fileID: 2069502014803124559, guid: f6c81c93750d08142a1192a904c50e6e,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: -20
+      objectReference: {fileID: 0}
+    - target: {fileID: 2069502014803124559, guid: f6c81c93750d08142a1192a904c50e6e,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2404733815809249650, guid: f6c81c93750d08142a1192a904c50e6e,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 52d7ce0abbb8844bd92343e9cef783b2,
+        type: 3}
+    - target: {fileID: 2404733815809249650, guid: f6c81c93750d08142a1192a904c50e6e,
+        type: 3}
+      propertyPath: m_Color.b
+      value: 0.17271857
+      objectReference: {fileID: 0}
+    - target: {fileID: 2404733815809249650, guid: f6c81c93750d08142a1192a904c50e6e,
+        type: 3}
+      propertyPath: m_Color.g
+      value: 0.17271857
+      objectReference: {fileID: 0}
+    - target: {fileID: 2404733815809249650, guid: f6c81c93750d08142a1192a904c50e6e,
+        type: 3}
+      propertyPath: m_Color.r
+      value: 0.7735849
+      objectReference: {fileID: 0}
+    - target: {fileID: 2404733815809249650, guid: f6c81c93750d08142a1192a904c50e6e,
+        type: 3}
+      propertyPath: m_PixelsPerUnitMultiplier
+      value: 2.64
+      objectReference: {fileID: 0}
     - target: {fileID: 5224399640057541513, guid: f6c81c93750d08142a1192a904c50e6e,
         type: 3}
       propertyPath: m_Pivot.x
@@ -180,19 +221,65 @@ PrefabInstance:
     - target: {fileID: 6672039528351692658, guid: f6c81c93750d08142a1192a904c50e6e,
         type: 3}
       propertyPath: m_Name
-      value: RetryButton
+      value: TryAgainButton
+      objectReference: {fileID: 0}
+    - target: {fileID: 9166332895793378437, guid: f6c81c93750d08142a1192a904c50e6e,
+        type: 3}
+      propertyPath: m_text
+      value: TRY AGAIN
+      objectReference: {fileID: 0}
+    - target: {fileID: 9166332895793378437, guid: f6c81c93750d08142a1192a904c50e6e,
+        type: 3}
+      propertyPath: m_fontSize
+      value: 51.1
       objectReference: {fileID: 0}
     - target: {fileID: 9166332895793378437, guid: f6c81c93750d08142a1192a904c50e6e,
         type: 3}
       propertyPath: m_fontAsset
       value: 
-      objectReference: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee,
+      objectReference: {fileID: 11400000, guid: bd49daad061372e41b54cab5d58377d0,
         type: 2}
+    - target: {fileID: 9166332895793378437, guid: f6c81c93750d08142a1192a904c50e6e,
+        type: 3}
+      propertyPath: m_fontColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9166332895793378437, guid: f6c81c93750d08142a1192a904c50e6e,
+        type: 3}
+      propertyPath: m_fontColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9166332895793378437, guid: f6c81c93750d08142a1192a904c50e6e,
+        type: 3}
+      propertyPath: m_fontColor.r
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 9166332895793378437, guid: f6c81c93750d08142a1192a904c50e6e,
         type: 3}
       propertyPath: m_sharedMaterial
       value: 
-      objectReference: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+      objectReference: {fileID: 7672258398719727018, guid: bd49daad061372e41b54cab5d58377d0,
+        type: 2}
+    - target: {fileID: 9166332895793378437, guid: f6c81c93750d08142a1192a904c50e6e,
+        type: 3}
+      propertyPath: m_enableAutoSizing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9166332895793378437, guid: f6c81c93750d08142a1192a904c50e6e,
+        type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 9166332895793378437, guid: f6c81c93750d08142a1192a904c50e6e,
+        type: 3}
+      propertyPath: m_enableWordWrapping
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9166332895793378437, guid: f6c81c93750d08142a1192a904c50e6e,
+        type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

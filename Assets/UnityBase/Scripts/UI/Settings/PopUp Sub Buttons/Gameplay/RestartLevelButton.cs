@@ -13,9 +13,6 @@ public class RestartLevelButton : ButtonBehaviour
 {
     [SerializeField] private float _stateChangeDelay = 0.2f;
 
-    [Inject]
-    private readonly IGameDataService _gameDataService;
-    
     [Inject] 
     private readonly ISceneGroupLoadService _sceneGroupLoadService;
 
@@ -40,8 +37,6 @@ public class RestartLevelButton : ButtonBehaviour
     
     protected override async void OnClick()
     {
-        _gameDataService.PlayGame();
-
         _popUpDataService.HidePopUp(_popUp);
 
         _tutorialStepDataService.ResetGamePlayTutorial();

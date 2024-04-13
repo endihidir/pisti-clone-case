@@ -10,7 +10,7 @@ public class CardAnimationProvider : ICardAnimationService
     private readonly Sprite _cardBackFace, _cardFrontFace;
     private CardFace _currentCardFace;
     
-    private Tween _cardMoveTween, _cardFlipTween, _cardRotateTween;
+    private Tween _cardMoveTween, _cardFlipTween, _cardRotateTween, _pistiAnimTween;
 
     public CardAnimationProvider(ICardAnimation cardAnimation)
     {
@@ -22,16 +22,16 @@ public class CardAnimationProvider : ICardAnimationService
         _cardBackFace = _cardAnimation.CardBackFace;
     }
 
-    public async UniTask Move(Vector3 pos, float duration, Ease ease, float delay = 0)
+    public async UniTask Move(Vector3 targetPosition, float duration, Ease ease, float delay = 0)
     {
         _cardMoveTween?.Kill();
 
-        var isSetToLastSibling = false;
+        var isSiblingOrderChanged = false;
         
-        var startDist = Vector3.Distance(_moveTransform.position, pos);
-        
-        _cardMoveTween = _moveTransform.DOMove(pos, duration)
-                                       .OnUpdate(() => ChnageSiblingOrder(pos, startDist, ref isSetToLastSibling))
+        var halfOfStartDistance = GetHalfOfStartDistance(_moveTransform.position, targetPosition);
+
+        _cardMoveTween = _moveTransform.DOMove(targetPosition, duration)
+                                       .OnUpdate(() => ChangeSiblingOrder(targetPosition, halfOfStartDistance, ref isSiblingOrderChanged))
                                        .SetEase(ease)
                                        .SetDelay(delay);
 
@@ -39,13 +39,13 @@ public class CardAnimationProvider : ICardAnimationService
         await _cardMoveTween.AsyncWaitForCompletion().AsUniTask();
     }
 
-    public async UniTask Rotate(Quaternion rot, float duration, Ease ease, float delay = 0)
+    public async UniTask Rotate(Quaternion targetRotation, float duration, Ease ease, float delay = 0)
     {
         _cardRotateTween?.Kill();
         
-        _cardRotateTween = _moveTransform.DORotateQuaternion(rot, duration)
-                                       .SetEase(ease)
-                                       .SetDelay(delay);
+        _cardRotateTween = _moveTransform.DORotateQuaternion(targetRotation, duration)
+                                         .SetEase(ease)
+                                         .SetDelay(delay);
         
         await _cardRotateTween.AsyncWaitForCompletion().AsUniTask();
     }
@@ -64,6 +64,17 @@ public class CardAnimationProvider : ICardAnimationService
 
         await _cardFlipTween.AsyncWaitForCompletion().AsUniTask();
     }
+    
+    public async UniTask PistiAnim(float zRotAngle, float duration, Ease ease, float delay = 0f)
+    {
+        _pistiAnimTween?.Kill();
+
+        _pistiAnimTween = _flipTransform.DOLocalRotate(Vector3.forward * zRotAngle, duration)
+                                        .SetEase(ease)
+                                        .SetDelay(delay);
+        
+        await _pistiAnimTween.AsyncWaitForCompletion().AsUniTask();
+    }
 
     public void Flip(CardFace cardFace)
     {
@@ -78,13 +89,25 @@ public class CardAnimationProvider : ICardAnimationService
             numberedCardView.EnableText(cardFace == CardFace.Front);
         }
     }
-    
-    private void ChnageSiblingOrder(Vector3 pos, float startDist, ref bool isSetToLastSibling)
+
+    private float GetHalfOfStartDistance(Vector3 startPosition, Vector3 targetPosition)
     {
-        var currentDistance = Vector3.Distance(_moveTransform.position, pos);
-        if (!(currentDistance < startDist * 0.5f) || isSetToLastSibling) return;
-        isSetToLastSibling = true;
-        _moveTransform.SetAsLastSibling();
+        var startDistance = Vector3.Distance(startPosition, targetPosition);
+        return startDistance * 0.5f;
+    }
+    
+    private void ChangeSiblingOrder(Vector3 targetPosition, float halfOfStartDistance, ref bool isSiblingOrderChanged)
+    {
+        if(isSiblingOrderChanged) return;
+        
+        var currentDistance = Vector3.Distance(_moveTransform.position, targetPosition);
+
+        if (currentDistance < halfOfStartDistance)
+        {
+            isSiblingOrderChanged = true;
+            
+            _moveTransform.SetAsLastSibling();
+        }
     }
 
     public void Dispose()

@@ -75,7 +75,7 @@ PrefabInstance:
     - target: {fileID: 1970972677015311343, guid: 887fae8f0b4694c4b8a47f69231b0255,
         type: 3}
       propertyPath: m_Name
-      value: NextLevelButton
+      value: PlayAgainButton
       objectReference: {fileID: 0}
     - target: {fileID: 4058069623354163284, guid: 887fae8f0b4694c4b8a47f69231b0255,
         type: 3}
@@ -86,11 +86,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 4058069623354163284, guid: 887fae8f0b4694c4b8a47f69231b0255,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4058069623354163284, guid: 887fae8f0b4694c4b8a47f69231b0255,
         type: 3}

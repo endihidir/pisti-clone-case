@@ -11,21 +11,17 @@ namespace UnityBase.Manager
 {
     public class GameplayManager : IGameplayDataService, IGameplayConstructorService
     {
-        private readonly IGameDataService _gameDataService;
         private readonly ITutorialStepDataService _tutorialStepDataService;
         
         private GameState _startState = GameState.GameLoadingState;
         private GameState _currentGameState = GameState.None;
+        private bool _isTransitionStarted;
+        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        
         public GameState CurrentGameState => _currentGameState;
         
-        private bool _isTransitionStarted;
-
-        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
-
-        public GameplayManager(IGameDataService gameDataService, ITutorialStepDataService tutorialStepDataService)
+        public GameplayManager(ITutorialStepDataService tutorialStepDataService)
         {
-            _gameDataService = gameDataService;
-            
             _tutorialStepDataService = tutorialStepDataService;
         }
 
@@ -47,11 +43,6 @@ namespace UnityBase.Manager
 
         private void InitializeGameState()
         {
-            if (_tutorialStepDataService.IsSelectedLevelTutorialEnabled)
-            {
-                TutorialStepManager.OnCompleteTutorialStep?.Invoke();
-            }
-            
             var gameState = _tutorialStepDataService.IsSelectedLevelTutorialEnabled ? GameState.GameTutorialState : GameState.GamePlayState;
 
             ChangeGameState(gameState, 1f, 0.5f);
@@ -64,8 +55,6 @@ namespace UnityBase.Manager
             Debug.Log($"Changing state from {_startState} to {gameState}");
 
             _isTransitionStarted = true;
-
-            _gameDataService?.PlayGame();
 
             GameStateData gameStateData = BuildGameStateData(gameState, transitionDuration);
 

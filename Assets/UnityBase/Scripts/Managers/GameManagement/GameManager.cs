@@ -1,23 +1,17 @@
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
-using UnityBase.EventBus;
-using UnityBase.Manager.Data;
 using UnityBase.ManagerSO;
 using UnityBase.Service;
 using UnityEngine;
 
 namespace UnityBase.Manager
 {
-    public class GameManager : IGameDataService, IAppConstructorDataService
+    public class GameManager : IAppConstructorDataService
     {
         private CanvasGroup _splashScreen;
         private readonly ISceneGroupLoadService _sceneGroupLoadService;
-        private float _fixedDeltaTime;
         private bool _passSplashScreen;
         private Tween _splashTween;
-        
-        private EventBinding<GameStateData> _gameStateBinding = new EventBinding<GameStateData>();
-
         public GameManager(AppDataHolderSO appDataHolderSo, ISceneGroupLoadService sceneGroupLoadService)
         {
             var gameManagerData = appDataHolderSo.gameManagerSo;
@@ -31,31 +25,9 @@ namespace UnityBase.Manager
 
         ~GameManager() => Dispose();
 
-        public void Initialize()
-        {
-            _fixedDeltaTime = Time.fixedDeltaTime;
-            
-            PlayGame();
-            
-            LoadGame();
-        }
+        public void Initialize() => LoadGame();
 
-        public void Dispose()
-        {
-            _gameStateBinding.Remove(OnStartGameStateTransition);
-            
-            EventBus<GameStateData>.RemoveListener(_gameStateBinding, GameStateData.GetChannel(TransitionState.Start));
-            
-            _splashTween.Kill();
-        }
-
-        private void OnStartGameStateTransition(GameStateData gameStateData)
-        {
-            if (gameStateData.EndState == GameState.GamePauseState)
-                PauseGame();
-            else
-                PlayGame();
-        }
+        public void Dispose() => _splashTween.Kill();
 
         private async void LoadGame()
         {
@@ -77,19 +49,6 @@ namespace UnityBase.Manager
             
             await UniTask.WaitForSeconds(0.25f);
         }
-
-        public void PlayGame()
-        {
-            if (Time.timeScale > 0f) return;
-            Time.timeScale = 1f;
-            Time.fixedDeltaTime = _fixedDeltaTime * Time.timeScale;
-        }
-
-        public void PauseGame()
-        {
-            if(Time.timeScale < 1f) return;
-            Time.timeScale = 0;
-            Time.fixedDeltaTime = _fixedDeltaTime * Time.timeScale;
-        }
+        
     }
 }

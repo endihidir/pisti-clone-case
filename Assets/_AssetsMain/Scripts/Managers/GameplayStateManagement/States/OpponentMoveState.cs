@@ -1,4 +1,5 @@
 using System;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityBase.StateMachineCore;
 
@@ -41,7 +42,7 @@ public class OpponentMoveState : IState
         }
     }
     
-    private void OnDropComplete(ICardBehaviour cardBehaviour)
+    private async void OnDropComplete(ICardBehaviour cardBehaviour)
     {
         var collectingType = _discardPile.GetCard(cardBehaviour);
         _opponentBoard.UserDeck.DropCard(cardBehaviour);
@@ -52,7 +53,11 @@ public class OpponentMoveState : IState
                 OnStateComplete?.Invoke();
                 break;
             case CardCollectingType.CollectAll:
+                _cardCollectingState.OnEnter();
+                break;
             case CardCollectingType.Pisti:
+                await cardBehaviour.CardAnimationService.PistiAnim(CardConstants.PISTI_ROTATION_ANGLE, 0.5f, Ease.InOutQuad);
+                await UniTask.WaitForSeconds(0.35f);
                 _cardCollectingState.OnEnter();
                 break;
         }

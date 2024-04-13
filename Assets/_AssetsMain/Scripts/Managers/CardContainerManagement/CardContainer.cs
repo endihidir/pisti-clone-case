@@ -10,6 +10,7 @@ public class CardContainer : ICardContainer, IGameplayConstructorService
     private readonly CardContainerSO _cardContainerSo;
     private readonly CardBehaviourFactory _cardBehaviourFactory;
     private readonly IDictionary<int, ICardBehaviour> _cardBehaviours;
+    private readonly List<CardViewController> _cardViewControllers;
     private readonly ICardPoolService _cardPoolService;
     private readonly CardDefinitionSO[] _cardDefinitions;
     private Stack<int> _cardIndexes;
@@ -24,7 +25,8 @@ public class CardContainer : ICardContainer, IGameplayConstructorService
         
         _cardDefinitions = _cardContainerSo.cardDefinitions;
         _totalDeckCount = _cardContainerSo.totalDeckCount;
-        
+
+        _cardViewControllers = new List<CardViewController>();
         _cardBehaviours = new Dictionary<int, ICardBehaviour>();
         _cardIndexes = new Stack<int>();
     }
@@ -34,8 +36,6 @@ public class CardContainer : ICardContainer, IGameplayConstructorService
         CashCardData();
         ShuffleCardIndexData();
     }
-
-    public void Dispose() { }
 
     private void CashCardData()
     {
@@ -84,6 +84,8 @@ public class CardContainer : ICardContainer, IGameplayConstructorService
         {
             cardViewController.Initialize(cardBehaviour);
 
+            _cardViewControllers.Add(cardViewController);
+            
             return true;
         }
 
@@ -91,4 +93,12 @@ public class CardContainer : ICardContainer, IGameplayConstructorService
     }
 
     public bool IsAllCardsFinished() => _cardIndexes.Count < 1;
+
+    public void Dispose()
+    {
+        foreach (var cardViewController in _cardViewControllers)
+        {
+            _cardPoolService.HideCardView(cardViewController);
+        }
+    }
 }
