@@ -1,5 +1,4 @@
 using System;
-using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityBase.StateMachineCore;
@@ -62,7 +61,6 @@ public class OpponentMoveState : IState
         var discardPileIsEmpty = _discardPile.DealtCards.Count < 1;
         var moreThanOneCardInOpponentDeck = opponentDeck.CardBehaviours.Count > 1;
         var notAllOpponentCardsAreJackCards = !opponentDeck.CardBehaviours.TrueForAll(c => c is JackCard);
-
         return isJackCard && discardPileIsEmpty && moreThanOneCardInOpponentDeck && notAllOpponentCardsAreJackCards;
     }
 
