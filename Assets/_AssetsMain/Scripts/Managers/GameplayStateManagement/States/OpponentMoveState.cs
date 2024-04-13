@@ -28,15 +28,9 @@ public class OpponentMoveState : IState
     {
         var opponentDeck = _opponentBoard.UserDeck;
 
-        ICardBehaviour cardBehaviour = null;
-
-        foreach (var discardPileDealtCard in _discardPile.DealtCards)
-        {
-            if (opponentDeck.TryGetMatchedCardWith(discardPileDealtCard, out cardBehaviour))
-                break;
-        }
-
-        if (cardBehaviour != null)
+        var isDiscardPileHasCard = _discardPile.DealtCards.TryPeek(out var lastCard);
+        
+        if (isDiscardPileHasCard && opponentDeck.TryGetMatchedCardWith(lastCard, out var cardBehaviour))
         {
             await DropSelectedCard(cardBehaviour);
         }

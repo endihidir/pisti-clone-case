@@ -32,7 +32,7 @@ public class ResultCalculationState : IState
         
         _isPlayerWin = userWithMaxPoint?.UserID == 0;
         
-        await UniTask.WaitForSeconds(1f);
+        await UniTask.WaitForSeconds(0.5f);
         
         OnStateComplete?.Invoke();
     }

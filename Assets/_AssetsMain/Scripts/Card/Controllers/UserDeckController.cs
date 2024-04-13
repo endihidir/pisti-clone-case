@@ -26,20 +26,20 @@ public class UserDeckController : IUserDeck
         return cardBehaviour != null;
     }
 
-    public bool TryGetMatchedCardWith(ICardBehaviour topOfTheCarOnPile, out ICardBehaviour selectedCardBehaviour)
+    public bool TryGetMatchedCardWith(ICardBehaviour topOfTheCardOnPile, out ICardBehaviour cardBehaviour)
     {
         foreach (var userCard in _cardBehaviours)
         {
             switch (userCard)
             {
-                case NumberedCard when topOfTheCarOnPile is NumberedCard && userCard.CardNumber == topOfTheCarOnPile.CardNumber:
-                case SpecialCard when topOfTheCarOnPile is SpecialCard && userCard.GetType() == topOfTheCarOnPile.GetType():
-                    selectedCardBehaviour = userCard;
+                case NumberedCard when topOfTheCardOnPile is NumberedCard && userCard.CardNumber == topOfTheCardOnPile.CardNumber:
+                case SpecialCard when topOfTheCardOnPile is SpecialCard && userCard.GetType() == topOfTheCardOnPile.GetType():
+                    cardBehaviour = userCard;
                     return true;
             }
         }
         
-        selectedCardBehaviour = null;
+        cardBehaviour = null;
         return false;
     }
 
