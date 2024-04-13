@@ -90,23 +90,24 @@ public class GameplayStateMachine : IStateMachine, ITickable, IGameplayConstruct
 
     private void OnOpponentMoveStateComplete()
     {
-        if (_currentGameplayState is not OpponentMoveState currentOpponent)
+        if (_currentGameplayState is OpponentMoveState currentOpponent)
         {
-            Debug.LogError("Current state can not cast to Opponent State");
-            return;
-        }
-        
-        var nextOpponentId = currentOpponent.UserID + 1;
+            var nextOpponentId = currentOpponent.UserID + 1;
 
-        if (IsLastOpponentCardsFinished)
-        {
-            ChangeState(_cardDistributionState);
+            if (IsLastOpponentCardsFinished)
+            {
+                ChangeState(_cardDistributionState);
+            }
+            else
+            {
+                var nextState = nextOpponentId > _opponentCount ? _playerMoveState : _opponentMoveStates[nextOpponentId - 1];
+            
+                ChangeState(nextState);
+            }
         }
         else
         {
-            var nextState = nextOpponentId > _opponentCount ? _playerMoveState : _opponentMoveStates[nextOpponentId - 1];
-            
-            ChangeState(nextState);
+            Debug.LogError("Current state can not cast to Opponent State");
         }
     }
     
@@ -122,19 +123,28 @@ public class GameplayStateMachine : IStateMachine, ITickable, IGameplayConstruct
 
     public void ChangeState(IState state)
     {
-        if (_currentGameplayState == state)
+        if (_currentGameplayState != state)
+        {
+            _currentGameplayState?.OnExit();
+            _currentGameplayState = state;
+            _currentGameplayState.OnEnter();
+        }
+        else
         {
             Debug.LogError("You can not set same state!");
-            return;
         }
-        
-        _currentGameplayState?.OnExit();
-        _currentGameplayState = state;
-        _currentGameplayState.OnEnter();
     }
     
     public void Dispose()
     {
+        _playerBoard.Reset();
+        _opponentBoards.ForEach(x => x.Reset());
+        
+        _cardDistributionState.Reset();
+        _playerMoveState.Reset();
+        _opponentMoveStates.ForEach(x => x.Reset());
+        _resultCalculationState.Reset();
+        
         _playerMoveState.OnStateComplete -= OnPlayerMoveStateComplete;
         
         for (int i = 0; i < _opponentCount; i++) 
@@ -144,8 +154,5 @@ public class GameplayStateMachine : IStateMachine, ITickable, IGameplayConstruct
         
         _gameStateBinding.Remove(OnGameplayStateChanged);
         EventBus<GameStateData>.RemoveListener(_gameStateBinding, GameStateData.GetChannel(TransitionState.Middle));
-        
-        _playerBoard.Reset();
-        _opponentBoards.ForEach(x => x.Reset());
     }
 }

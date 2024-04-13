@@ -7,7 +7,6 @@ public class ResultCalculationState : IState
 {
     public event Action OnStateComplete;
     private readonly List<IUserBoard> _allUserBoards;
-
     private bool _isPlayerWin;
 
     public bool IsPlayerWin => _isPlayerWin;
@@ -35,20 +34,9 @@ public class ResultCalculationState : IState
         OnStateComplete?.Invoke();
     }
 
-    public void OnUpdate(float deltaTime)
-    {
-        
-    }
-
-    public void OnExit()
-    {
-        
-    }
-
-    public void Reset()
-    {
-        
-    }
+    public void OnUpdate(float deltaTime) { }
+    public void OnExit() { }
+    public void Reset() { }
     
     private void AddExtraPointToUsers()
     {

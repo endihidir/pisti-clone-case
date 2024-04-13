@@ -21,23 +21,14 @@ public class UserDeckController : IUserDeck
     public void DropCard(ICardBehaviour cardBehaviour) => _cardBehaviours.Remove(cardBehaviour);
     public bool TryGetRandomCard(out ICardBehaviour cardBehaviour)
     {
-        var firstCard =  _cardBehaviours.Shuffle().FirstOrDefault();
+        cardBehaviour =  _cardBehaviours.Shuffle().FirstOrDefault();
 
-        cardBehaviour = null;
-        
-        if (firstCard != null)
-        {
-            cardBehaviour = firstCard;
-            _cardBehaviours.Remove(firstCard);
-            return true;
-        }
-        
-        return false;
+        return cardBehaviour != null;
     }
 
     public bool ContainsCard(ICardBehaviour cardBehaviour) => _cardBehaviours.Contains(cardBehaviour);
     public void Reset()
     {
-        
+        _cardBehaviours.Clear();
     }
 }

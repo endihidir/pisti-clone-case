@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityBase.StateMachineCore;
 using UnityEngine;
@@ -10,18 +8,19 @@ public class PlayerMoveState : IState
     public event Action OnStateComplete;
     private readonly IUserBoard _playerBoard;
     private readonly IDiscardBoard _discardBoard;
-    private readonly Camera _cam;
-
+    private readonly IState _cardCollectingState;
     private bool _isCardSelected;
+    
     public PlayerMoveState(IUserBoard playerBoard, IDiscardBoard discardBoard)
     {
         _playerBoard = playerBoard;
         _discardBoard = discardBoard;
-        _cam = Camera.main;
-    }
-    
-    public void OnEnter() { }
 
+        _cardCollectingState = new CardCollectingState(playerBoard, discardBoard);
+        _cardCollectingState.OnStateComplete += OnCardCollectingStateComplete;
+    }
+
+    public void OnEnter() { }
     public void OnUpdate(float deltaTime) => SelectCard();
 
     private async void SelectCard()
@@ -39,7 +38,7 @@ public class PlayerMoveState : IState
                 if (inputDetector.IsInRange(Input.mousePosition))
                 {
                     _isCardSelected = true;
-                    var distributionSpeed = CardConstants.DISTRIBUTION_SPEED;
+                    var distributionSpeed = CardConstants.MOVE_SPEED;
                     var cardAnimationService = cardBehaviour.CardAnimationService;
                     cardAnimationService.Rotate(_discardBoard.Slots[0].rotation, distributionSpeed, Ease.InOutQuad);
                     await cardAnimationService.Move(_discardBoard.Slots[0].position, distributionSpeed, Ease.InOutQuad);
@@ -53,7 +52,6 @@ public class PlayerMoveState : IState
     private void OnDropComplete(ICardBehaviour cardBehaviour)
     {
         var collectingType = _discardBoard.GetCard(cardBehaviour);
-        
         _playerBoard.UserDeck.DropCard(cardBehaviour);
         
         switch (collectingType)
@@ -63,39 +61,21 @@ public class PlayerMoveState : IState
                 break;
             case CardCollectingType.CollectAll:
             case CardCollectingType.Pisti:
-                CollectAllCards();
+                _cardCollectingState.OnEnter();
                 break;
         }
     }
-
-    private async void CollectAllCards()
+    
+    private void OnCardCollectingStateComplete() => OnStateComplete?.Invoke();
+    public void OnExit()
     {
-        var distributionSpeed = CardConstants.DISTRIBUTION_SPEED;
-        var distributionDelay = CardConstants.DISTRIBUTION_DELAY;
-        
-        var droppedCards = _discardBoard.DroppedCards;
-
-        var tasks = new List<UniTask>();
-        var index = 0;
-        foreach (var cardBehaviour in droppedCards)
-        {
-            var cardAnimationService = cardBehaviour.CardAnimationService;
-            var collectedCards = _playerBoard.CollectedCards;
-            collectedCards.CollectCard(cardBehaviour);
-            cardAnimationService.Flip(CardFace.Back, distributionSpeed, Ease.InOutQuad, index * distributionDelay);
-            cardAnimationService.Rotate(collectedCards.CardCollectingArea.rotation, distributionSpeed, Ease.InOutQuad, index *distributionDelay);
-            var task = cardAnimationService.Move(collectedCards.CardCollectingArea.position, distributionSpeed, Ease.InOutQuad, index * distributionDelay);
-            tasks.Add(task);
-            index++;
-        }
-        
-        await UniTask.WhenAll(tasks);
-        
-        _discardBoard.ClearDeck();
-        
-        OnStateComplete?.Invoke();
+        _cardCollectingState.OnExit();
+        _isCardSelected = false;
     }
 
-    public void OnExit() => _isCardSelected = false;
-    public void Reset() { }
+    public void Reset()
+    {
+        _cardCollectingState.Reset();
+        _cardCollectingState.OnStateComplete -= OnCardCollectingStateComplete;
+    }
 }
