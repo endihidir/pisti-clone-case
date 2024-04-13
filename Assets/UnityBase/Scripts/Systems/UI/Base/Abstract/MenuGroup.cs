@@ -15,7 +15,7 @@ namespace UnityBase.UI.Menu
         [Title("General Settings")] 
         [SerializeField] protected bool _openOnStart;
 
-        [SerializeField] protected float _openDuration = 0.5f, _cloaseDuration = 0.5f;
+        [SerializeField] protected float _openDuration = 0.5f, _closeDuration = 0.5f;
 
         [SerializeField] protected float _openDelay, _closeDelay;
 
@@ -149,7 +149,7 @@ namespace UnityBase.UI.Menu
             _canvasGroup.blocksRaycasts = false;
 
             _canvasFade.Kill();
-            _canvasFade = _canvasGroup.DOFade(0f, _cloaseDuration)
+            _canvasFade = _canvasGroup.DOFade(0f, _closeDuration)
                 .SetEase(_ease)
                 .SetDelay(_closeDelay)
                 .SetUpdate(_unscaledTime)

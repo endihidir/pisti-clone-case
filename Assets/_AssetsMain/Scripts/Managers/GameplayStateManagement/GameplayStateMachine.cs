@@ -121,7 +121,7 @@ public class GameplayStateMachine : IStateMachine, ITickable, IGameplayConstruct
     private void OnResultCalculated()
     {
         var isPlayerWin = ((ResultCalculationState)_resultCalculationState).IsPlayerWin;
-        _gameplayDataService.ChangeGameState(isPlayerWin ? GameState.GameSuccessState : GameState.GameFailState, 1f);
+        _gameplayDataService.ChangeGameState(isPlayerWin ? GameState.GameSuccessState : GameState.GameFailState, 0f);
     }
 
     public void Tick() => _currentGameplayState?.OnUpdate(Time.deltaTime);

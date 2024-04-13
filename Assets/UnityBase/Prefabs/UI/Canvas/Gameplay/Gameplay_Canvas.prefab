@@ -189,6 +189,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2777816043287028156}
     m_Modifications:
+    - target: {fileID: 1174043642044987294, guid: 314b9f1a464cb4a52ba3f52c8dd00d87,
+        type: 3}
+      propertyPath: _unscaledTime
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2811593306249142763, guid: 314b9f1a464cb4a52ba3f52c8dd00d87,
         type: 3}
       propertyPath: m_Name
@@ -463,6 +468,11 @@ PrefabInstance:
       propertyPath: _openDuration
       value: 0.2
       objectReference: {fileID: 0}
+    - target: {fileID: 3519798843219184881, guid: b115b4a13bba940328822803fb74d215,
+        type: 3}
+      propertyPath: _unscaledTime
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4560785020849756522, guid: b115b4a13bba940328822803fb74d215,
         type: 3}
       propertyPath: m_AnchorMax.x
@@ -655,7 +665,7 @@ PrefabInstance:
     - target: {fileID: 1632873431918791617, guid: 26924ec20b6024e4b9dfb1d3742dcf1a,
         type: 3}
       propertyPath: m_fontSize
-      value: 49.8
+      value: 52
       objectReference: {fileID: 0}
     - target: {fileID: 1632873431918791617, guid: 26924ec20b6024e4b9dfb1d3742dcf1a,
         type: 3}
