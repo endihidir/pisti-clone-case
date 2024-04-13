@@ -89,7 +89,12 @@ public class CollectedCardsContainer : ICollectedCards
         _userBoardView.SetCollectedCardCount(_collectedCardCounterForView);
     }
 
-    public void AddExtraPoint(int point) => _collectedTotalPoint += point;
+    public void AddExtraPoint(int point)
+    {
+        _collectedTotalPoint += point;
+        UpdateTotalCardPointView();
+    }
+
     public IDictionary<Type, CollectedCardData> GetSumOfCollectedCards() => _cardsPoints;
     public IDictionary<Type, CollectedCardData> GetSumOfPistiCards() => _pistiPoints;
     public void Reset()
