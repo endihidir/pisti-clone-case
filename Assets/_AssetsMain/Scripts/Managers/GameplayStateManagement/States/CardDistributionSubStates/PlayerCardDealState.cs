@@ -3,14 +3,14 @@ using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityBase.StateMachineCore;
 
-public class PlayerCardDistributionState : IState
+public class PlayerCardDealState : IState
 {
     public event Action OnStateComplete;
 
     private readonly IUserBoard _playerBoard;
     
     private readonly ICardContainer _cardContainer;
-    public PlayerCardDistributionState(IUserBoard playerBoard, ICardContainer cardContainer)
+    public PlayerCardDealState(IUserBoard playerBoard, ICardContainer cardContainer)
     {
         _playerBoard = playerBoard;
         _cardContainer = cardContainer;
@@ -18,14 +18,14 @@ public class PlayerCardDistributionState : IState
     
     public async void OnEnter()
     {
-        await DistributeToPlayerDeck();
+        await DealCardsToPlayerDeck();
 
         OnStateComplete?.Invoke();
     }
     
-    private async UniTask DistributeToPlayerDeck()
+    private async UniTask DealCardsToPlayerDeck()
     {
-        for (int i = 0; i < CardConstants.DISTRIBUTION_COUNT; i++)
+        for (int i = 0; i < CardConstants.DEALING_COUNT; i++)
         {
             if (!_cardContainer.TryGetRandomCard(out var cardBehaviour)) continue;
             

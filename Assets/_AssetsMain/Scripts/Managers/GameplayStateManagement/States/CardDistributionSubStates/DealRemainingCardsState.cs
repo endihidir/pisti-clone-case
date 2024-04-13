@@ -2,31 +2,31 @@
 using System.Linq;
 using UnityBase.StateMachineCore;
 
-public class DistributeRemainingCardsState : IState
+public class DealRemainingCardsState : IState
 {
     public event Action OnStateComplete;
 
     private readonly IUserBoard _playerBoard;
     private readonly IUserBoard[] _opponentsBoard;
-    private readonly IDiscardBoard _discardBoard;
+    private readonly IDiscardPile _discardPile;
     
     private IState _cardCollectingState;
-    public DistributeRemainingCardsState(IUserBoard playerBoard, IUserBoard[] opponentsBoard, IDiscardBoard discardBoard)
+    public DealRemainingCardsState(IUserBoard playerBoard, IUserBoard[] opponentsBoard, IDiscardPile discardPile)
     {
         _playerBoard = playerBoard;
         _opponentsBoard = opponentsBoard;
-        _discardBoard = discardBoard;
+        _discardPile = discardPile;
     }
     
-    public void OnEnter() => DistributeRaminingCardsToLastCollectedUser();
+    public void OnEnter() => DealRaminingCardsToLastCollectedUser();
 
-    private void DistributeRaminingCardsToLastCollectedUser()
+    private void DealRaminingCardsToLastCollectedUser()
     {
-        if (_discardBoard.DroppedCards.Count > 0)
+        if (_discardPile.DealtCards.Count > 0)
         {
             var lastCollectedBoard = SelectLastCardCollectedBoard();
 
-            _cardCollectingState = new CardCollectingState(lastCollectedBoard, _discardBoard);
+            _cardCollectingState = new CardCollectingState(lastCollectedBoard, _discardPile);
             
             _cardCollectingState.OnStateComplete += OnCardCollectingStateComplete;
             
@@ -49,8 +49,8 @@ public class DistributeRemainingCardsState : IState
 
     private IUserBoard SelectLastCardCollectedBoard()
     {
-        return _discardBoard.LastCollectedUserID == _playerBoard.UserID ? _playerBoard : 
-            _opponentsBoard.FirstOrDefault(opponentBoard => opponentBoard.UserID == _discardBoard.LastCollectedUserID);
+        return _discardPile.LastCollectedUserID == _playerBoard.UserID ? _playerBoard : 
+            _opponentsBoard.FirstOrDefault(opponentBoard => opponentBoard.UserID == _discardPile.LastCollectedUserID);
     }
 
     public void OnUpdate(float deltaTime) => _cardCollectingState?.OnUpdate(deltaTime);

@@ -4,15 +4,15 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Game/Pisti/GameplayStateMachineData")]
 public class GameplayStateMachineSO : ScriptableObject
 {
-    public BoardView[] deckViews;
+    public BoardView[] boardViews;
 
     public void Initialize()
     {
-        deckViews = FindObjectsOfType<BoardView>();
+        boardViews = FindObjectsOfType<BoardView>();
     }
 
-    public int GetOpponentCount() => deckViews.Count(deckView => deckView is OpponentBoardView);
-    public T GetDeckView<T>() where T : BoardView => deckViews.FirstOrDefault(deckView => deckView is T) as T;
-    public T[] GetDeckViews<T>() where T : BoardView => deckViews.OfType<T>().ToArray();
-    public OpponentBoardView GetOpponentDeckViewBy(int id) => GetDeckViews<OpponentBoardView>().FirstOrDefault(deckView => deckView.ID == id);
+    public int GetOpponentCount() => boardViews.Count(boardView => boardView is OpponentBoardView);
+    public T GetBoardView<T>() where T : BoardView => boardViews.FirstOrDefault(boardView => boardView is T) as T;
+    public T[] GetBoardViews<T>() where T : BoardView => boardViews.OfType<T>().ToArray();
+    public OpponentBoardView GetOpponentBoardViewBy(int id) => GetBoardViews<OpponentBoardView>().FirstOrDefault(opponentBoardView => opponentBoardView.ID == id);
 }

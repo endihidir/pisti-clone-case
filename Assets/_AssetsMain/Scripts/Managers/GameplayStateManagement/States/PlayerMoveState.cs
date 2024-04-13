@@ -7,16 +7,16 @@ public class PlayerMoveState : IState
 {
     public event Action OnStateComplete;
     private readonly IUserBoard _playerBoard;
-    private readonly IDiscardBoard _discardBoard;
+    private readonly IDiscardPile _discardPile;
     private readonly IState _cardCollectingState;
     private bool _isCardSelected;
     
-    public PlayerMoveState(IUserBoard playerBoard, IDiscardBoard discardBoard)
+    public PlayerMoveState(IUserBoard playerBoard, IDiscardPile discardPile)
     {
         _playerBoard = playerBoard;
-        _discardBoard = discardBoard;
+        _discardPile = discardPile;
 
-        _cardCollectingState = new CardCollectingState(playerBoard, discardBoard);
+        _cardCollectingState = new CardCollectingState(playerBoard, discardPile);
         _cardCollectingState.OnStateComplete += OnCardCollectingStateComplete;
     }
 
@@ -40,8 +40,8 @@ public class PlayerMoveState : IState
                     _isCardSelected = true;
                     var distributionSpeed = CardConstants.MOVE_SPEED;
                     var cardAnimationService = cardBehaviour.CardAnimationService;
-                    cardAnimationService.Rotate(_discardBoard.Slots[0].rotation, distributionSpeed, Ease.InOutQuad);
-                    await cardAnimationService.Move(_discardBoard.Slots[0].position, distributionSpeed, Ease.InOutQuad);
+                    cardAnimationService.Rotate(_discardPile.Slots[0].rotation, distributionSpeed, Ease.InOutQuad);
+                    await cardAnimationService.Move(_discardPile.Slots[0].position, distributionSpeed, Ease.InOutQuad);
                     OnDropComplete(cardBehaviour);
                     break;
                 }
@@ -51,7 +51,7 @@ public class PlayerMoveState : IState
 
     private void OnDropComplete(ICardBehaviour cardBehaviour)
     {
-        var collectingType = _discardBoard.GetCard(cardBehaviour);
+        var collectingType = _discardPile.GetCard(cardBehaviour);
         _playerBoard.UserDeck.DropCard(cardBehaviour);
         
         switch (collectingType)

@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IDiscardBoard
+public interface IDiscardPile
 {
-    public Stack<ICardBehaviour> DroppedCards { get; }
+    public Stack<ICardBehaviour> DealtCards { get; }
     public Transform[] Slots { get; }
     public int LastCollectedUserID { get; }
     public void PushCard(ICardBehaviour cardBehaviour);

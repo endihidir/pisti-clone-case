@@ -3,18 +3,18 @@ using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityBase.StateMachineCore;
 
-public class DiscardDistributionState : IState
+public class DiscardPileDealState : IState
 {
     private bool _isFirstRound = true;
     
     public event Action OnStateComplete;
 
-    private readonly IDiscardBoard _discardBoard;
+    private readonly IDiscardPile _discardPile;
     
     private readonly ICardContainer _cardContainer;
-    public DiscardDistributionState(IDiscardBoard discardBoard, ICardContainer cardContainer)
+    public DiscardPileDealState(IDiscardPile discardPile, ICardContainer cardContainer)
     {
-        _discardBoard = discardBoard;
+        _discardPile = discardPile;
         _cardContainer = cardContainer;
     }
     
@@ -31,15 +31,15 @@ public class DiscardDistributionState : IState
         
         _isFirstRound = false;
 
-        for (int i = 0; i < CardConstants.DISTRIBUTION_COUNT; i++)
+        for (int i = 0; i < CardConstants.DEALING_COUNT; i++)
         {
             if (!_cardContainer.TryGetRandomCard(out var cardBehaviour)) continue;
             
-            _discardBoard.PushCard(cardBehaviour);
+            _discardPile.PushCard(cardBehaviour);
             
             var cardAnimationService = cardBehaviour.CardAnimationService;
             if (i > 2) cardAnimationService.Flip(CardFace.Front, CardConstants.MOVE_SPEED, Ease.InOutQuad, i * CardConstants.MOVE_DELAY);
-            cardAnimationService.Move(_discardBoard.Slots[0].position, CardConstants.MOVE_SPEED, Ease.InOutQuad, i * CardConstants.MOVE_DELAY);
+            cardAnimationService.Move(_discardPile.Slots[0].position, CardConstants.MOVE_SPEED, Ease.InOutQuad, i * CardConstants.MOVE_DELAY);
         }
 
         await UniTask.WaitForSeconds(CardConstants.MOVE_SPEED + CardConstants.MOVE_DELAY);

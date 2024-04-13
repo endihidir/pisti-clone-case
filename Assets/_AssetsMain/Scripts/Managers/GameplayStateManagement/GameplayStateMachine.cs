@@ -17,8 +17,7 @@ public class GameplayStateMachine : IStateMachine, ITickable, IGameplayConstruct
     private readonly GameplayStateMachineSO _gameplayStateMachineSo;
     private readonly int _opponentCount;
 
-    private readonly IDiscardBoard _discardBoard;
-    private readonly IState _idleState, _playerMoveState, _cardDistributionState, _resultCalculationState;
+    private readonly IState _idleState, _playerMoveState, _cardDealingState, _resultCalculationState;
     private readonly IState[] _opponentMoveStates;
     
     private readonly IUserBoard _playerBoard;
@@ -31,15 +30,17 @@ public class GameplayStateMachine : IStateMachine, ITickable, IGameplayConstruct
     public IState CurrentGameplayState => _currentGameplayState;
     private bool IsLastOpponentCardsFinished => ((OpponentMoveState)_opponentMoveStates[^1]).IsCardsFinished;
     
-    public GameplayStateMachine(GameplayDataHolderSO gameplayDataHolderSo, IDiscardBoard discardBoard, ICardContainer cardContainer)
+    public GameplayStateMachine(GameplayDataHolderSO gameplayDataHolderSo, IDiscardPile discardPile, ICardContainer cardContainer)
     {
         _gameplayStateMachineSo = gameplayDataHolderSo.gameplayStateMachineSo;
         _opponentCount = _gameplayStateMachineSo.GetOpponentCount();
-        _discardBoard = discardBoard;
+        _gameStateBinding = new EventBinding<GameStateData>();
 
-        var playerBoard = _gameplayStateMachineSo.GetDeckView<PlayerBoardView>();
+        _idleState = new IdleState();
+        
+        var playerBoard = _gameplayStateMachineSo.GetBoardView<PlayerBoardView>();
         _playerBoard = new UserBoardController(0, new UserDeckController(playerBoard.Slots), new CollectedCardsContainer(playerBoard.CardCollectingArea));
-        _playerMoveState = new PlayerMoveState(_playerBoard, _discardBoard);
+        _playerMoveState = new PlayerMoveState(_playerBoard, discardPile);
 
         _opponentBoards = new IUserBoard[_opponentCount];
         _opponentMoveStates = new IState[_opponentCount];
@@ -47,16 +48,13 @@ public class GameplayStateMachine : IStateMachine, ITickable, IGameplayConstruct
         for (int i = 0; i < _opponentCount; i++)
         {
             var userID = i + 1;
-            var opponentBoard = _gameplayStateMachineSo.GetOpponentDeckViewBy(userID);
+            var opponentBoard = _gameplayStateMachineSo.GetOpponentBoardViewBy(userID);
             _opponentBoards[i] = new UserBoardController(userID, new UserDeckController(opponentBoard.Slots), new CollectedCardsContainer(opponentBoard.CardCollectingArea));
-            _opponentMoveStates[i] = new OpponentMoveState(_opponentBoards[i], _discardBoard);
+            _opponentMoveStates[i] = new OpponentMoveState(_opponentBoards[i], discardPile);
         }
-
-        _idleState = new IdleState();
-        _cardDistributionState = new CardDistributionState(cardContainer, _playerBoard, _opponentBoards, _discardBoard);
-        _resultCalculationState = new ResultCalculationState(_playerBoard, _opponentBoards);
         
-        _gameStateBinding = new EventBinding<GameStateData>();
+        _cardDealingState = new CardDealingState(cardContainer, _playerBoard, _opponentBoards, discardPile);
+        _resultCalculationState = new ResultCalculationState(_playerBoard, _opponentBoards);
 
         ChangeState(_idleState);
     }
@@ -68,7 +66,7 @@ public class GameplayStateMachine : IStateMachine, ITickable, IGameplayConstruct
         for (int i = 0; i < _opponentCount; i++) 
             _opponentMoveStates[i].OnStateComplete += OnOpponentMoveStateComplete;
 
-        _cardDistributionState.OnStateComplete += OnDistributionStateComplete;
+        _cardDealingState.OnStateComplete += OnDealingStateComplete;
         _resultCalculationState.OnStateComplete += OnResultCalculated;
         
         _gameStateBinding.Add(OnGameplayStateChanged);
@@ -82,7 +80,7 @@ public class GameplayStateMachine : IStateMachine, ITickable, IGameplayConstruct
 
         if (startState == GameState.GameLoadingState && _currentGameState == GameState.GamePlayState)
         {
-            ChangeState(_cardDistributionState);
+            ChangeState(_cardDealingState);
         }
     }
 
@@ -96,7 +94,7 @@ public class GameplayStateMachine : IStateMachine, ITickable, IGameplayConstruct
 
             if (IsLastOpponentCardsFinished)
             {
-                ChangeState(_cardDistributionState);
+                ChangeState(_cardDealingState);
             }
             else
             {
@@ -111,7 +109,7 @@ public class GameplayStateMachine : IStateMachine, ITickable, IGameplayConstruct
         }
     }
     
-    private void OnDistributionStateComplete() => ChangeState(IsLastOpponentCardsFinished ? _resultCalculationState : _playerMoveState);
+    private void OnDealingStateComplete() => ChangeState(IsLastOpponentCardsFinished ? _resultCalculationState : _playerMoveState);
 
     private void OnResultCalculated()
     {
@@ -140,9 +138,9 @@ public class GameplayStateMachine : IStateMachine, ITickable, IGameplayConstruct
         _playerBoard.Reset();
         _opponentBoards.ForEach(x => x.Reset());
         
-        _cardDistributionState.Reset();
         _playerMoveState.Reset();
         _opponentMoveStates.ForEach(x => x.Reset());
+        _cardDealingState.Reset();
         _resultCalculationState.Reset();
         
         _playerMoveState.OnStateComplete -= OnPlayerMoveStateComplete;
@@ -150,7 +148,7 @@ public class GameplayStateMachine : IStateMachine, ITickable, IGameplayConstruct
         for (int i = 0; i < _opponentCount; i++) 
             _opponentMoveStates[i].OnStateComplete -= OnOpponentMoveStateComplete;
         
-        _cardDistributionState.OnStateComplete -= OnDistributionStateComplete;
+        _cardDealingState.OnStateComplete -= OnDealingStateComplete;
         
         _gameStateBinding.Remove(OnGameplayStateChanged);
         EventBus<GameStateData>.RemoveListener(_gameStateBinding, GameStateData.GetChannel(TransitionState.Middle));

@@ -2,27 +2,27 @@ using System.Collections.Generic;
 using UnityBase.ManagerSO;
 using UnityEngine;
 
-public class DiscardBoardController : IDiscardBoard
+public class DiscardPileController : IDiscardPile
 {
-    private readonly Stack<ICardBehaviour> _droppedCards;
+    private readonly Stack<ICardBehaviour> _dealtCards;
     private readonly Transform[] _slots;
     private int _lastCollectedUserID = -1;
-    public Stack<ICardBehaviour> DroppedCards => _droppedCards;
+    public Stack<ICardBehaviour> DealtCards => _dealtCards;
     public Transform[] Slots => _slots;
     public int LastCollectedUserID => _lastCollectedUserID;
 
-    public DiscardBoardController(GameplayDataHolderSO gameplayDataHolderSo)
+    public DiscardPileController(GameplayDataHolderSO gameplayDataHolderSo)
     {
-        _slots = gameplayDataHolderSo.gameplayStateMachineSo.GetDeckView<DiscardBoardView>().Slots;
+        _slots = gameplayDataHolderSo.gameplayStateMachineSo.GetBoardView<DiscardPileBoardView>().Slots;
         
-        _droppedCards = new Stack<ICardBehaviour>();
+        _dealtCards = new Stack<ICardBehaviour>();
     }
 
-    public void PushCard(ICardBehaviour cardBehaviour) => _droppedCards.Push(cardBehaviour);
+    public void PushCard(ICardBehaviour cardBehaviour) => _dealtCards.Push(cardBehaviour);
 
     public CardCollectingType GetCard(ICardBehaviour cardBehaviour)
     {
-        var hasCard = _droppedCards.TryPeek(out var lastCardBeforeDrop);
+        var hasCard = _dealtCards.TryPeek(out var lastCardBeforeDrop);
         
         PushCard(cardBehaviour);
 
@@ -33,7 +33,7 @@ public class DiscardBoardController : IDiscardBoard
             
             if (isNumberedCardsSame || isSpecialCardsSame)
             {
-                if (_droppedCards.Count == 2)
+                if (_dealtCards.Count == 2)
                 {
                     cardBehaviour.IsPistiCard = true;
                     _lastCollectedUserID = cardBehaviour.OwnerUserID;
@@ -67,7 +67,7 @@ public class DiscardBoardController : IDiscardBoard
                lastCardBeforeDrop.GetType() == cardBehaviour.GetType();
     }
     
-    public void ClearDeck() => _droppedCards.Clear();
+    public void ClearDeck() => _dealtCards.Clear();
 }
 
 public enum CardCollectingType

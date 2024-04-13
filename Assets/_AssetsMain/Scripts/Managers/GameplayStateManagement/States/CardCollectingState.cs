@@ -8,12 +8,12 @@ public class CardCollectingState : IState
     public event Action OnStateComplete;
 
     private readonly IUserBoard _collectedUserBoard;
-    private readonly IDiscardBoard _discardBoard;
+    private readonly IDiscardPile _discardPile;
 
-    public CardCollectingState(IUserBoard collectedUserBoard, IDiscardBoard discardBoard)
+    public CardCollectingState(IUserBoard collectedUserBoard, IDiscardPile discardPile)
     {
         _collectedUserBoard = collectedUserBoard;
-        _discardBoard = discardBoard;
+        _discardPile = discardPile;
     }
     
     public async void OnEnter()
@@ -25,8 +25,8 @@ public class CardCollectingState : IState
     
     private async UniTask CollectAllCards()
     {
-        var distributionSpeed = CardConstants.MOVE_SPEED;
-        var droppedCards = _discardBoard.DroppedCards;
+        var moveSpeed = CardConstants.MOVE_SPEED;
+        var droppedCards = _discardPile.DealtCards;
 
         var tasks = new UniTask[droppedCards.Count];
         var index = 0;
@@ -39,9 +39,9 @@ public class CardCollectingState : IState
             cardBehaviour.OwnerUserID = _collectedUserBoard.UserID;
             
             var distributionDelay = index * CardConstants.MOVE_DELAY;
-            cardAnimationService.Flip(CardFace.Back, distributionSpeed, Ease.InOutQuad, distributionDelay);
-            cardAnimationService.Rotate(collectedCards.CardCollectingArea.rotation, distributionSpeed, Ease.InOutQuad, distributionDelay);
-            var task = cardAnimationService.Move(collectedCards.CardCollectingArea.position, distributionSpeed, Ease.InOutQuad, distributionDelay);
+            cardAnimationService.Flip(CardFace.Back, moveSpeed, Ease.InOutQuad, distributionDelay);
+            cardAnimationService.Rotate(collectedCards.CardCollectingArea.rotation, moveSpeed, Ease.InOutQuad, distributionDelay);
+            var task = cardAnimationService.Move(collectedCards.CardCollectingArea.position, moveSpeed, Ease.InOutQuad, distributionDelay);
 
             tasks[index] = task;
             index++;
@@ -49,7 +49,7 @@ public class CardCollectingState : IState
         
         await UniTask.WhenAll(tasks);
         
-        _discardBoard.ClearDeck();
+        _discardPile.ClearDeck();
     }
 
     public void OnUpdate(float deltaTime) { }

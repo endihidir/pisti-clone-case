@@ -6,19 +6,19 @@ public class OpponentMoveState : IState
 {
     public event Action OnStateComplete;
     private readonly IUserBoard _opponentBoard;
-    private readonly IDiscardBoard _discardBoard;
+    private readonly IDiscardPile _discardPile;
     private readonly IState _cardCollectingState;
     
     public int UserID => _opponentBoard.UserID;
     public int CardCount => _opponentBoard.UserDeck.CardBehaviours.Count;
     public bool IsCardsFinished => CardCount < 1;
 
-    public OpponentMoveState(IUserBoard opponentBoard, IDiscardBoard discardBoard)
+    public OpponentMoveState(IUserBoard opponentBoard, IDiscardPile discardPile)
     {
         _opponentBoard = opponentBoard;
-        _discardBoard = discardBoard;
+        _discardPile = discardPile;
         
-        _cardCollectingState = new CardCollectingState(opponentBoard, discardBoard);
+        _cardCollectingState = new CardCollectingState(opponentBoard, discardPile);
         _cardCollectingState.OnStateComplete += OnCardCollectingStateComplete;
     }
 
@@ -31,8 +31,8 @@ public class OpponentMoveState : IState
             var cardAnimationService = cardBehaviour.CardAnimationService;
             
             cardAnimationService.Flip(CardFace.Front, CardConstants.MOVE_SPEED, Ease.InOutQuad);
-            cardAnimationService.Rotate(_discardBoard.Slots[0].rotation, CardConstants.MOVE_SPEED, Ease.InOutQuad);
-            await cardAnimationService.Move(_discardBoard.Slots[0].position, CardConstants.MOVE_SPEED, Ease.InOutQuad);
+            cardAnimationService.Rotate(_discardPile.Slots[0].rotation, CardConstants.MOVE_SPEED, Ease.InOutQuad);
+            await cardAnimationService.Move(_discardPile.Slots[0].position, CardConstants.MOVE_SPEED, Ease.InOutQuad);
             OnDropComplete(cardBehaviour);
         }
         else
@@ -43,7 +43,7 @@ public class OpponentMoveState : IState
     
     private void OnDropComplete(ICardBehaviour cardBehaviour)
     {
-        var collectingType = _discardBoard.GetCard(cardBehaviour);
+        var collectingType = _discardPile.GetCard(cardBehaviour);
         _opponentBoard.UserDeck.DropCard(cardBehaviour);
 
         switch (collectingType)
