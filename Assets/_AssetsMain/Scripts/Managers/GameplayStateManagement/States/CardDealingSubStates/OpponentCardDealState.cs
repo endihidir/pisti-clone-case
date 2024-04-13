@@ -38,11 +38,11 @@ public class OpponentCardDealState : IState
                 opponentDeck.AddCard(cardBehaviour);
                 var cardAnimationService = cardBehaviour.CardAnimationService;
                 var delay = i * CardConstants.MOVE_DELAY;
-                cardAnimationService.Rotate(opponentDeck.Slots[i].rotation, CardConstants.MOVE_SPEED, Ease.InOutQuad, delay);
-                cardAnimationService.Move(opponentDeck.Slots[i].position, CardConstants.MOVE_SPEED, Ease.InOutQuad, delay);
+                cardAnimationService.Rotate(opponentDeck.Slots[i].rotation, CardConstants.MOVE_DURATION, Ease.InOutQuad, delay);
+                cardAnimationService.Move(opponentDeck.Slots[i].position, CardConstants.MOVE_DURATION, Ease.InOutQuad, delay);
             }
             
-            await UniTask.WaitForSeconds(CardConstants.MOVE_SPEED + CardConstants.MOVE_DELAY);
+            await UniTask.WaitForSeconds(CardConstants.MOVE_DURATION + CardConstants.MOVE_DELAY);
         }
     }
 

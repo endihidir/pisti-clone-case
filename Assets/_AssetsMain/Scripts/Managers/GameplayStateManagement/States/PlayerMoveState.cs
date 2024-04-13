@@ -39,10 +39,9 @@ public class PlayerMoveState : IState
                 if (inputDetector.IsInRange(Input.mousePosition))
                 {
                     _isCardSelected = true;
-                    var distributionSpeed = CardConstants.MOVE_SPEED;
                     var cardAnimationService = cardBehaviour.CardAnimationService;
-                    cardAnimationService.Rotate(_discardPile.Slots[0].rotation, distributionSpeed, Ease.InOutQuad);
-                    await cardAnimationService.Move(_discardPile.Slots[0].position, distributionSpeed, Ease.InOutQuad);
+                    cardAnimationService.Rotate(_discardPile.Slots[0].rotation, CardConstants.MOVE_DURATION, Ease.InOutQuad);
+                    await cardAnimationService.Move(_discardPile.Slots[0].position, CardConstants.MOVE_DURATION, Ease.InOutQuad);
                     OnDropComplete(cardBehaviour);
                     break;
                 }
@@ -61,6 +60,8 @@ public class PlayerMoveState : IState
                 OnStateComplete?.Invoke();
                 break;
             case CardCollectingType.CollectAll:
+                await cardBehaviour.CardAnimationService.MoveAdditive(Vector3.right * CardConstants.COLLECTED_ANIM_SPACE, CardConstants.COLLECTED_ANIM_SPEED, Ease.InOutQuad);
+                await UniTask.WaitForSeconds(0.35f);
                 _cardCollectingState.OnEnter();
                 break;
             case CardCollectingType.Pisti:

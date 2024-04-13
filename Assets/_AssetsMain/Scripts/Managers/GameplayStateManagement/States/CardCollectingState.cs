@@ -25,7 +25,6 @@ public class CardCollectingState : IState
     
     private async UniTask CollectAllCards()
     {
-        var moveSpeed = CardConstants.MOVE_SPEED;
         var droppedCards = _discardPile.DealtCards;
 
         var tasks = new UniTask[droppedCards.Count];
@@ -38,10 +37,10 @@ public class CardCollectingState : IState
             collectedCards.CollectCard(cardBehaviour);
             cardBehaviour.OwnerUserID = _collectedUserBoard.UserID;
             
-            var distributionDelay = index * CardConstants.MOVE_DELAY;
-            cardAnimationService.Flip(CardFace.Back, moveSpeed, Ease.InOutQuad, distributionDelay);
-            cardAnimationService.Rotate(collectedCards.CardCollectingArea.rotation, moveSpeed, Ease.InOutQuad, distributionDelay);
-            var task = cardAnimationService.Move(collectedCards.CardCollectingArea.position, moveSpeed, Ease.InOutQuad, distributionDelay);
+            var delay = index * CardConstants.MOVE_DELAY;
+            cardAnimationService.Flip(CardFace.Back, CardConstants.MOVE_DURATION, Ease.InOutQuad, delay);
+            cardAnimationService.Rotate(collectedCards.CardCollectingArea.rotation, CardConstants.MOVE_DURATION, Ease.InOutQuad, delay);
+            var task = cardAnimationService.Move(collectedCards.CardCollectingArea.position, CardConstants.MOVE_DURATION, Ease.InOutQuad, delay);
 
             tasks[index] = task;
             index++;

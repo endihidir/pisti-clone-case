@@ -39,6 +39,19 @@ public class CardAnimationProvider : ICardAnimationService
         await _cardMoveTween.AsyncWaitForCompletion().AsUniTask();
     }
 
+    public async UniTask MoveAdditive(Vector3 targetPosition, float duration, Ease ease, float delay = 0)
+    {
+        _cardMoveTween?.Kill();
+        
+        var startPos = _moveTransform.position;
+        
+        _cardMoveTween = _moveTransform.DOMove(startPos + targetPosition, duration)
+                                       .SetEase(ease)
+                                       .SetDelay(delay);
+        
+        await _cardMoveTween.AsyncWaitForCompletion().AsUniTask();
+    }
+
     public async UniTask Rotate(Quaternion targetRotation, float duration, Ease ease, float delay = 0)
     {
         _cardRotateTween?.Kill();

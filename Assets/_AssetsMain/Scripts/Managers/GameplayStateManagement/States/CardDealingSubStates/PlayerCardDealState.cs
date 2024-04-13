@@ -34,12 +34,12 @@ public class PlayerCardDealState : IState
             playerDeck.AddCard(cardBehaviour);
             var cardAnimationService = cardBehaviour.CardAnimationService;
             var delay = i * CardConstants.MOVE_DELAY;
-            cardAnimationService.Flip(CardFace.Front, CardConstants.MOVE_SPEED, Ease.InOutQuad, delay);
-            cardAnimationService.Rotate(playerDeck.Slots[i].rotation, CardConstants.MOVE_SPEED, Ease.InOutQuad, delay);
-            cardAnimationService.Move(playerDeck.Slots[i].position, CardConstants.MOVE_SPEED, Ease.InOutQuad, delay);
+            cardAnimationService.Flip(CardFace.Front, CardConstants.MOVE_DURATION, Ease.InOutQuad, delay);
+            cardAnimationService.Rotate(playerDeck.Slots[i].rotation, CardConstants.MOVE_DURATION, Ease.InOutQuad, delay);
+            cardAnimationService.Move(playerDeck.Slots[i].position, CardConstants.MOVE_DURATION, Ease.InOutQuad, delay);
         }
 
-        await UniTask.WaitForSeconds(CardConstants.MOVE_SPEED + CardConstants.MOVE_DELAY);
+        await UniTask.WaitForSeconds(CardConstants.MOVE_DURATION + CardConstants.MOVE_DELAY);
     }
 
     public void OnUpdate(float deltaTime) { }

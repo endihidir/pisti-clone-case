@@ -2,6 +2,7 @@ using System;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityBase.StateMachineCore;
+using UnityEngine;
 
 public class OpponentMoveState : IState
 {
@@ -30,10 +31,9 @@ public class OpponentMoveState : IState
         if (opponentDeck.TryGetRandomCard(out var cardBehaviour))
         {
             var cardAnimationService = cardBehaviour.CardAnimationService;
-            
-            cardAnimationService.Flip(CardFace.Front, CardConstants.MOVE_SPEED, Ease.InOutQuad);
-            cardAnimationService.Rotate(_discardPile.Slots[0].rotation, CardConstants.MOVE_SPEED, Ease.InOutQuad);
-            await cardAnimationService.Move(_discardPile.Slots[0].position, CardConstants.MOVE_SPEED, Ease.InOutQuad);
+            cardAnimationService.Flip(CardFace.Front, CardConstants.MOVE_DURATION, Ease.InOutQuad);
+            cardAnimationService.Rotate(_discardPile.Slots[0].rotation, CardConstants.MOVE_DURATION, Ease.InOutQuad);
+            await cardAnimationService.Move(_discardPile.Slots[0].position, CardConstants.MOVE_DURATION, Ease.InOutQuad);
             OnDropComplete(cardBehaviour);
         }
         else
@@ -53,6 +53,8 @@ public class OpponentMoveState : IState
                 OnStateComplete?.Invoke();
                 break;
             case CardCollectingType.CollectAll:
+                await cardBehaviour.CardAnimationService.MoveAdditive(Vector3.right * CardConstants.COLLECTED_ANIM_SPACE, CardConstants.COLLECTED_ANIM_SPEED, Ease.InOutQuad);
+                await UniTask.WaitForSeconds(0.35f);
                 _cardCollectingState.OnEnter();
                 break;
             case CardCollectingType.Pisti:
