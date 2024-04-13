@@ -1,4 +1,6 @@
 
+using UnityEngine;
+
 public class GameRoundViewHandler
 {
     private readonly GameRoundView _gameRoundView;
@@ -23,6 +25,7 @@ public class GameRoundViewHandler
     public void UpdateView()
     {
         _roundCounter++;
+        _roundCounter = Mathf.Clamp(_roundCounter, 1, _totalGameRound);
         _gameRoundView.SetGameRoundTxt(_roundCounter, _totalGameRound);
     }
 
