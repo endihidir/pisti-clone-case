@@ -5,10 +5,12 @@ using UnityEngine;
 public class GameplayStateMachineSO : ScriptableObject
 {
     public BoardView[] boardViews;
+    public GameRoundView gameRoundView;
 
     public void Initialize()
     {
         boardViews = FindObjectsOfType<BoardView>();
+        gameRoundView = FindObjectOfType<GameRoundView>();
     }
 
     public int GetOpponentCount() => boardViews.Count(boardView => boardView is OpponentBoardView);

@@ -65,7 +65,7 @@ public class CardDealingState : IState
         _playerCardDealState.Reset();
         _opponentsCardDealState.Reset();
         _remainingCardsDealState.Reset();
-        
+
         _discardDealState.OnStateComplete -= OnDiscardDealStateComplete;
         _playerCardDealState.OnStateComplete -= OnPlayerCardDealStateComplete;
         _opponentsCardDealState.OnStateComplete -= OnOpponentCardDealStateComplete;

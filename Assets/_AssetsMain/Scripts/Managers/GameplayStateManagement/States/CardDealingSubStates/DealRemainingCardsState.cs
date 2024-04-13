@@ -9,7 +9,7 @@ public class DealRemainingCardsState : IState
     private readonly IUserBoard _playerBoard;
     private readonly IUserBoard[] _opponentsBoard;
     private readonly IDiscardPile _discardPile;
-    
+
     private IState _cardCollectingState;
     public DealRemainingCardsState(IUserBoard playerBoard, IUserBoard[] opponentsBoard, IDiscardPile discardPile)
     {

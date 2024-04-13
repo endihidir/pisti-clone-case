@@ -1,3 +1,4 @@
+using System;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
@@ -22,7 +23,7 @@ public class CardAnimationProvider : ICardAnimationService
         _cardBackFace = _cardAnimation.CardBackFace;
     }
 
-    public async UniTask Move(Vector3 targetPosition, float duration, Ease ease, float delay = 0)
+    public async UniTask Move(Vector3 targetPosition, float duration, Ease ease, float delay = 0, Action onComplete = default)
     {
         _cardMoveTween?.Kill();
 
@@ -33,13 +34,14 @@ public class CardAnimationProvider : ICardAnimationService
         _cardMoveTween = _moveTransform.DOMove(targetPosition, duration)
                                        .OnUpdate(() => ChangeSiblingOrder(targetPosition, halfOfStartDistance, ref isSiblingOrderChanged))
                                        .SetEase(ease)
-                                       .SetDelay(delay);
+                                       .SetDelay(delay)
+                                       .OnComplete(()=> onComplete?.Invoke());
 
         
         await _cardMoveTween.AsyncWaitForCompletion().AsUniTask();
     }
 
-    public async UniTask MoveAdditive(Vector3 targetPosition, float duration, Ease ease, float delay = 0)
+    public async UniTask MoveAdditive(Vector3 targetPosition, float duration, Ease ease, float delay = 0, Action onComplete = default)
     {
         _cardMoveTween?.Kill();
         
@@ -47,23 +49,25 @@ public class CardAnimationProvider : ICardAnimationService
         
         _cardMoveTween = _moveTransform.DOMove(startPos + targetPosition, duration)
                                        .SetEase(ease)
-                                       .SetDelay(delay);
+                                       .SetDelay(delay)
+                                       .OnComplete(()=> onComplete?.Invoke());
         
         await _cardMoveTween.AsyncWaitForCompletion().AsUniTask();
     }
 
-    public async UniTask Rotate(Quaternion targetRotation, float duration, Ease ease, float delay = 0)
+    public async UniTask Rotate(Quaternion targetRotation, float duration, Ease ease, float delay = 0, Action onComplete = default)
     {
         _cardRotateTween?.Kill();
         
         _cardRotateTween = _moveTransform.DORotateQuaternion(targetRotation, duration)
                                          .SetEase(ease)
-                                         .SetDelay(delay);
+                                         .SetDelay(delay)
+                                         .OnComplete(()=> onComplete?.Invoke());
         
         await _cardRotateTween.AsyncWaitForCompletion().AsUniTask();
     }
 
-    public async UniTask Flip(CardFace cardFace, float duration, Ease ease, float delay = 0f)
+    public async UniTask Flip(CardFace cardFace, float duration, Ease ease, float delay = 0f, Action onComplete = default)
     {
         if(_currentCardFace == cardFace) return;
 
@@ -73,18 +77,20 @@ public class CardAnimationProvider : ICardAnimationService
                                 .AppendInterval(delay)
                                 .Append(_flipTransform.DOLocalRotate(Vector3.up * 90f, duration * 0.5f).SetEase(ease))
                                 .AppendCallback(() => Flip(cardFace))
-                                .Append(_flipTransform.DOLocalRotate(Vector3.up * 0f, duration * 0.5f).SetEase(ease));
+                                .Append(_flipTransform.DOLocalRotate(Vector3.up * 0f, duration * 0.5f).SetEase(ease))
+                                .AppendCallback(()=> onComplete?.Invoke());
 
         await _cardFlipTween.AsyncWaitForCompletion().AsUniTask();
     }
     
-    public async UniTask PistiAnim(float zRotAngle, float duration, Ease ease, float delay = 0f)
+    public async UniTask PistiAnim(float zRotAngle, float duration, Ease ease, float delay = 0f, Action onComplete = default)
     {
         _pistiAnimTween?.Kill();
 
         _pistiAnimTween = _flipTransform.DOLocalRotate(Vector3.forward * zRotAngle, duration)
                                         .SetEase(ease)
-                                        .SetDelay(delay);
+                                        .SetDelay(delay)
+                                        .OnComplete(()=> onComplete?.Invoke());
         
         await _pistiAnimTween.AsyncWaitForCompletion().AsUniTask();
     }

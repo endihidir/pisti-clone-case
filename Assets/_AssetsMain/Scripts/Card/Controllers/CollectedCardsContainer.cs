@@ -4,19 +4,25 @@ using UnityEngine;
 
 public class CollectedCardsContainer : ICollectedCards
 {
+    private readonly UserBoardView _userBoardView;
     private readonly IDictionary<Type, CollectedCardData> _cardsPoints;
     private readonly IDictionary<Type, CollectedCardData> _pistiPoints;
     private readonly Transform _cardCollectingArea;
-    private int _collectedTotalPoint;
-    private int _collectedCardCount;
     
+    private int _collectedTotalPoint;
+
+    private int _collectedCardCount;
+    private int _collectedCardCounterForView;
+
+    public UserBoardView UserBoardView => _userBoardView;
     public Transform CardCollectingArea => _cardCollectingArea;
     public int CollectedCardPoint => _collectedTotalPoint;
     public int CollectedCardCount => _collectedCardCount;
 
-    public CollectedCardsContainer(Transform cardCollectingArea)
+    public CollectedCardsContainer(UserBoardView userBoardView)
     {
-        _cardCollectingArea = cardCollectingArea;
+        _userBoardView = userBoardView;
+        _cardCollectingArea = _userBoardView.CardCollectingArea;
 
         _cardsPoints = new Dictionary<Type, CollectedCardData>();
         _pistiPoints = new Dictionary<Type, CollectedCardData>();
@@ -30,7 +36,7 @@ public class CollectedCardsContainer : ICollectedCards
         
         FillPistiCardPointData(cardBehaviour);
     }
-    
+
     private void FillCardPointData(ICardBehaviour cardBehaviour)
     {
         if (cardBehaviour.GetCardPoint() <= 0) return;
@@ -75,11 +81,20 @@ public class CollectedCardsContainer : ICollectedCards
         _collectedTotalPoint += pistiPoint;
     }
 
+    public void UpdateTotalCardPointView() => _userBoardView.SetScore(_collectedTotalPoint);
+
+    public void UpdateCollectedCardCountView()
+    {
+        _collectedCardCounterForView++;
+        _userBoardView.SetCollectedCardCount(_collectedCardCounterForView);
+    }
+
     public void AddExtraPoint(int point) => _collectedTotalPoint += point;
     public IDictionary<Type, CollectedCardData> GetSumOfCollectedCards() => _cardsPoints;
     public IDictionary<Type, CollectedCardData> GetSumOfPistiCards() => _pistiPoints;
     public void Reset()
     {
+        _collectedCardCounterForView = 0;
         _collectedCardCount = 0;
         _cardsPoints.Clear();
         _pistiPoints.Clear();

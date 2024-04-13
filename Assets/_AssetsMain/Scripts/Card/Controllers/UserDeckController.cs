@@ -11,9 +11,9 @@ public class UserDeckController : IUserDeck
     public List<ICardBehaviour> CardBehaviours => _cardBehaviours;
     public Transform[] Slots => _slots;
     
-    public UserDeckController(Transform[] slots)
+    public UserDeckController(UserBoardView userBoardView)
     {
-        _slots = slots;
+        _slots = userBoardView.Slots;
         _cardBehaviours = new List<ICardBehaviour>();
     }
 

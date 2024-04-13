@@ -6,6 +6,7 @@ using UnityBase.Service;
 public class CardContainer : ICardContainer, IGameplayConstructorService
 {
     public const int TOTAL_DECK_CARD_COUNT = 52;
+    
     private readonly int _totalDeckCount;
     private readonly CardContainerSO _cardContainerSo;
     private readonly CardBehaviourFactory _cardBehaviourFactory;
@@ -16,6 +17,7 @@ public class CardContainer : ICardContainer, IGameplayConstructorService
     private Stack<int> _cardIndexes;
     
     public int TotalDeckCount => _totalDeckCount;
+    public int TotalCardCount => TotalDeckCount * TOTAL_DECK_CARD_COUNT;
 
     public CardContainer(GameplayDataHolderSO gameplayDataHolderSo, CardBehaviourFactory cardBehaviourFactory, ICardPoolService cardPoolService)
     {
@@ -64,7 +66,7 @@ public class CardContainer : ICardContainer, IGameplayConstructorService
     {
         _cardIndexes.Clear();
         
-        for (int i = 0; i < _totalDeckCount * TOTAL_DECK_CARD_COUNT; i++) 
+        for (int i = 0; i < TotalCardCount; i++) 
             _cardIndexes.Push(i);
 
         _cardIndexes = _cardIndexes.Shuffle();
