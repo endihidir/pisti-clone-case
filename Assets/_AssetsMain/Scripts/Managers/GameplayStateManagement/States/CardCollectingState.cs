@@ -6,7 +6,6 @@ using UnityBase.StateMachineCore;
 public class CardCollectingState : IState
 {
     public event Action OnStateComplete;
-
     private readonly IUserBoard _collectedUserBoard;
     private readonly IDiscardPile _discardPile;
     private ICollectedCards _collectedCards;
@@ -53,7 +52,6 @@ public class CardCollectingState : IState
     }
 
     private void OnMovementComplete() => _collectedCards.UpdateCollectedCardCountView();
-
     public void OnUpdate(float deltaTime) { }
     public void OnExit() { }
     public void Reset() { }

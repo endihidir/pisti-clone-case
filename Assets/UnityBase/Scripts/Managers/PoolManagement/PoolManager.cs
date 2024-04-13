@@ -79,6 +79,8 @@ namespace UnityBase.Manager
         
         public void HideAllObjectsOfType<T>(float duration, float delay, Action onComplete = default) where T : IPoolable
         {
+            if(_isDisposed) return;
+            
             var poolables = PoolableObjectGroup.FindPoolablesOfType<T>();
             
             poolables?.ForEach(poolable => HideObject(poolable, duration, delay, onComplete));
@@ -86,6 +88,8 @@ namespace UnityBase.Manager
 
         public void HideAll(float duration, float delay, Action onComplete = default)
         {
+            if(_isDisposed) return;
+            
             var poolables = PoolableObjectGroup.FindPoolablesOfType<IPoolable>();
             
             poolables?.ForEach(poolable => HideObject(poolable, duration, delay, onComplete));

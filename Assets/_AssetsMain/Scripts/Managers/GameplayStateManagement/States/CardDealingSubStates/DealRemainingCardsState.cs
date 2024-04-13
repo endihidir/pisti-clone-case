@@ -43,7 +43,7 @@ public class DealRemainingCardsState : IState
         _cardCollectingState.Reset();
         
         _cardCollectingState.OnStateComplete -= OnCardCollectingStateComplete;
-        
+
         OnStateComplete?.Invoke();
     }
 

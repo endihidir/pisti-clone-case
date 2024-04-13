@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using UnityBase.StateMachineCore;
 
 public class ResultCalculationState : IState
@@ -21,15 +22,17 @@ public class ResultCalculationState : IState
         }
     }
     
-    public void OnEnter()
+    public async void OnEnter()
     {
-        AddExtraPointToUsers();
+        AddExtraPointToUser();
         
         var maxPoint = _allUserBoards.Max(x => x.CollectedCards.CollectedCardPoint);
         
         var userWithMaxPoint = _allUserBoards.FirstOrDefault(x => x.CollectedCards.CollectedCardPoint == maxPoint);
         
         _isPlayerWin = userWithMaxPoint?.UserID == 0;
+        
+        await UniTask.WaitForSeconds(1f);
         
         OnStateComplete?.Invoke();
     }
@@ -38,7 +41,7 @@ public class ResultCalculationState : IState
     public void OnExit() { }
     public void Reset() { }
     
-    private void AddExtraPointToUsers()
+    private void AddExtraPointToUser()
     {
         var maxCardCount = _allUserBoards.Max(x => x.CollectedCards.CollectedCardCount);
 
