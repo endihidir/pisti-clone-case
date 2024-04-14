@@ -14,7 +14,7 @@ public class NumberedCardView : CardView
 
     public NumberedCardView SetNumber(int number)
     {
-        _numberTxt.text = number.ToString("0");
+        _numberTxt.text = number == 1 ? "A" : number.ToString("0");
         return this;
     }
 
