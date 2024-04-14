@@ -10,7 +10,6 @@ public class CollectedCardsContainer : ICollectedCards
     private readonly Transform _cardCollectingArea;
     
     private int _collectedTotalPoint;
-
     private int _collectedCardCount;
     private int _collectedCardCounterForView;
 
@@ -95,8 +94,8 @@ public class CollectedCardsContainer : ICollectedCards
         UpdateTotalCardPointView();
     }
 
-    public IDictionary<Type, CollectedCardData> GetSumOfCollectedCards() => _cardsPoints;
-    public IDictionary<Type, CollectedCardData> GetSumOfPistiCards() => _pistiPoints;
+    public IDictionary<Type, CollectedCardData> GetCollectedCardsData() => _cardsPoints;
+    public IDictionary<Type, CollectedCardData> GetPistiCardsData() => _pistiPoints;
     public void Reset()
     {
         _collectedCardCounterForView = 0;

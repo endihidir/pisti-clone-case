@@ -12,7 +12,7 @@ public interface ICollectedCards
     public void AddExtraPoint(int point);
     public void UpdateTotalCardPointView();
     public void UpdateCollectedCardCountView();
-    public IDictionary<Type, CollectedCardData> GetSumOfCollectedCards();
-    public IDictionary<Type, CollectedCardData> GetSumOfPistiCards();
+    public IDictionary<Type, CollectedCardData> GetCollectedCardsData();
+    public IDictionary<Type, CollectedCardData> GetPistiCardsData();
     public void Reset();
 }
