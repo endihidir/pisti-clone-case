@@ -488,6 +488,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerBoardView
       objectReference: {fileID: 0}
+    - target: {fileID: 6918021552631907213, guid: b115b4a13bba940328822803fb74d215,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7869297498202481190, guid: b115b4a13bba940328822803fb74d215,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
@@ -529,7 +534,8 @@ PrefabInstance:
       value: OpponentBoardView
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 1665007455181780831, guid: b115b4a13bba940328822803fb74d215, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b115b4a13bba940328822803fb74d215, type: 3}

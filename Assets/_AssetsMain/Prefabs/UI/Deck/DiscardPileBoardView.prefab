@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5197901190026211625}
   - component: {fileID: 4756537409543359775}
   m_Layer: 5
-  m_Name: DiscardView
+  m_Name: DiscardPileBoardView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
